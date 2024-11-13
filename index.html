@@ -11,15 +11,24 @@
 
 <body class="bg-gray-100 font-mono leading-normal tracking-normal"> 
     <!-- Navbar --> 
-     <header class="bg-gray-800 text-white p-4"> 
-        <h1 class="text-xl text-center font-bold">F1 Dashboard</h1> 
-    </header> 
-    
-    <!-- Main Container --> 
-     <main class="container mx-auto p-4 flex"> 
+    <header class="bg-gray-800 text-white p-4 flex items-center justify-between">
+
+        <img class="h-12" src="images/logo.png" alt="logo">
         
+        <h1 class="text-xl font-bold mx-auto">F1 Dashboard</h1>
+
+        <div id="nav_buttons" class=" hidden flex space-x-4">
+            <button  id="home_button" class="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400">Home</button>
+            <button class="bg-red-700 text-white px-6 py-2 rounded-lg hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-400">Favorites</button>
+        </div>
+    </header>
+    
+
+     
+    <!-- Full Home View -->   
+    <div id="home" class="container mx-auto p-4 flex space-x-4">
         <!-- Sidebar (Season Selector and Description) --> 
-         <article id="home" class="w-1/3 p-6 bg-white shadow-md border-r border-gray-300"> 
+        <section id="sidebar" class="w-1/3 p-6 bg-white shadow-md border rounded-lg">
             <h2 class="text-2xl text-center font-semibold mb-4">Welcome to the F1 Dashboard</h2>
             <form id="season-form"> 
                 <label for="season" class="block text-gray-700 mb-2">Select Season:</label> 
@@ -32,30 +41,37 @@
                 </select> 
             </form> 
             <p class="mt-4 text-gray-600">Description goes here.</p> 
-        </article> 
+        </section> 
         
         <!-- Image Container --> 
-        <div class="w-2/3 flex justify-center items-center bg-gray-50"> 
-            <img src="images/home.jpg" alt="F1 Image" class="max-w-full max-h-full"> 
-        </div>
+        <section class="w-2/3 flex justify-center items-center bg-gray-50 rounded-lg shadow-md">
+            <div class="w-full h-full flex justify-center items-center">
+                <img src="images/home.jpg" alt="F1 Image" class="object-contain w-full h-full rounded-lg">
+            </div>
+        </section>
+    </div>
 
-        <!-- Browse View -->
-        <article id="browse" class="hidden">
-            <h2 class="text-2xl font-semibold mb-4">Browse Seasons</h2>
-            <p>Select a season to view races.</p>
-            <!-- Content for browsing seasons -->
-        </article>
-
+    <!-- Full Race View -->
+    <div id="race" class="container mx-auto p-4 flex hidden space-x-4">
         <!-- Races View -->
-        <section id="races" class="hidden">
-            <h2 class="text-2xl font-semibold mb-4">Races</h2>
-            <ul class="races-list overflow-y-scroll max-h-96">
-                <!-- Races will be populated here -->
-            </ul>
+        <section id="races" class="w-1/3 p-6 bg-white shadow-md border rounded-lg">
+            <h2 class="flex justify-center font-semibold mb-4">Races</h2>
+            <div class="overflow-y-scroll max-h-96">
+                <table class="min-w-full table-auto">
+                    <thead>
+                        <tr>
+                            <!--<th class="px-4 py-2 border-b">Round</th> -->
+                            <th class="px-4 py-2 text-left font-semibold text-sm text-gray-700 border-b">Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="race_table">
+                    </tbody>
+                </table>
+            </div>
         </section>
 
         <!-- Race Results View -->
-        <section id="raceResults" class="hidden">
+        <section id="raceResults" class="w-2/3 p-6 bg-white shadow-md border rounded-lg">
             <h2 class="text-2xl font-semibold mb-4">Race Results</h2>
             <div id="qualify" class="mb-4">
                 <h3 class="text-xl font-semibold">Qualifying Results</h3>
@@ -66,6 +82,8 @@
                 <!-- Race results content -->
             </div>
         </section>
+    </div>
+
 
         <!-- Circuit Modal -->
         <aside id="circuit" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
@@ -93,9 +111,9 @@
                 <button class="close-modal mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
             </div>
         </aside>
-    </main>
+    
 
-    <!-- JavaScript -->
+    <!-- JavaScript 
     <script>
         // Helper function to toggle views
         function showView(viewId) {
@@ -112,7 +130,7 @@
                 button.closest('aside').classList.add('hidden');
             });
         });
-    </script>
+    </script> -->
 </body>
 
 </html>
