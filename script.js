@@ -56,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () =>{
 });
 
 /*Function Definitions*/
+
+/*This function will change*/
 function process_race_data(data){
 
     const race_list = document.querySelector("#race_table");
@@ -79,7 +81,7 @@ function process_race_data(data){
         td_button.appendChild(button);
 
         row.appendChild(name);
-        row.appendChild(td_button);
+
 
 
         race_list.appendChild(row);
