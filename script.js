@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 function process_race_data(data){
 
     const race_list = document.querySelector("#race_table");
+    race_list.innerHTML = "";
 
     for(let race of data){
 
