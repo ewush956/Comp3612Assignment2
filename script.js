@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () =>{
-
-    localStorage.clear();
+    
     let season = document.querySelector("#season");
     let home_button = document.querySelector("#home_button");
     let current_season;
@@ -9,8 +8,6 @@ document.addEventListener("DOMContentLoaded", () =>{
     season.addEventListener("change", () =>{
 
         current_season = season.value;
-
-
 
         current_view = change_view(current_view);
 
@@ -32,10 +29,8 @@ document.addEventListener("DOMContentLoaded", () =>{
 
                 localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
 
-                const race_data = JSON.parse(localStorage.getItem(`${current_season}RaceData`));
-
-                console.log(race_data);
-                process_race_data(race_data);
+                console.log(data);
+                process_race_data(data);
 
 
             })
@@ -69,7 +64,7 @@ function process_race_data(data){
     for(let race of data){
 
         let row = document.createElement("tr");
-        row.classList.add("hover:bg-gray-200");
+        row.classList.add("hover:bg-gray-200", "cursor-pointer");
 
         let name = document.createElement("td");
         name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
