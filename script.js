@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     logo.addEventListener("click", () =>{
 
-        current_view = change_view(current_view);
+        current_view = change_view("race");
         season.value = "select";
 
     });
