@@ -13,7 +13,7 @@
     <!-- Navbar --> 
     <header class="bg-gray-800 text-white p-4 flex items-center justify-between">
 
-        <img class="h-12" src="images/logo.png" alt="logo">
+        <img id="logo" class="h-12 cursor-pointer" src="images/logo.png" alt="logo">
         
         <h1 class="text-xl font-bold mx-auto">F1 Dashboard</h1>
 
@@ -26,21 +26,23 @@
 
      
     <!-- Full Home View -->   
-    <div id="home" class="container mx-auto p-4 flex space-x-4">
+    <article id="home" class="container mx-auto p-4 flex space-x-4">
         <!-- Sidebar (Season Selector and Description) --> 
         <section id="sidebar" class="w-1/3 p-6 bg-white shadow-md border rounded-lg">
             <h2 class="text-2xl text-center font-semibold mb-4">Welcome to the F1 Dashboard</h2>
-            <form id="season-form"> 
-                <label for="season" class="block text-gray-700 mb-2">Select Season:</label> 
-                <select name="season" id="season" class="season-selector w-full p-2 border border-gray-300 rounded"> 
-                    <option value="select">Select a Season...</option>
-                    <option value="2020">2020</option> 
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option> 
-                    <option value="2023">2023</option> 
-                </select> 
-            </form> 
-            <p class="mt-4 text-gray-600">Description goes here.</p> 
+            <div class="h-40 p-4 border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                <form id="season-form"> 
+                    <label for="season" class="block text-gray-700 mb-2">Select Season:</label> 
+                    <select name="season" id="season" class="season-selector w-full p-2 border border-gray-300 rounded"> 
+                        <option value="select">Select a Season...</option>
+                        <option value="2020">2020</option> 
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option> 
+                        <option value="2023">2023</option> 
+                    </select> 
+                </form> 
+                <p class="mt-4 text-gray-600">Description goes here.</p> 
+            </div>
         </section> 
         
         <!-- Image Container --> 
@@ -49,40 +51,99 @@
                 <img src="images/home.jpg" alt="F1 Image" class="object-contain w-full h-full rounded-lg">
             </div>
         </section>
-    </div>
+    </article>
 
     <!-- Full Race View -->
-    <div id="race" class="container mx-auto p-4 flex hidden space-x-4">
-        <!-- Races View -->
-        <section id="races" class="w-1/3 p-6 bg-white shadow-md border rounded-lg">
-            <h2 class="flex justify-center font-semibold mb-4">Races</h2>
-            <div class="overflow-y-scroll max-h-96">
-                <table class="min-w-full table-auto">
-                    <thead>
-                        <tr>
-                            <!--<th class="px-4 py-2 border-b">Round</th> -->
-                            <th class="px-4 py-2 text-left font-semibold text-sm text-gray-700 border-b">Name</th>
-                        </tr>
-                    </thead>
-                    <tbody id="race_table">
-                    </tbody>
-                </table>
-            </div>
-        </section>
+    <article id="race" class="container mx-auto p-4 flex flex-col space-y-4 hidden">
+        <!-- Main Header for the entire view -->
+        <header class="w-full p-4 bg-white shadow-md border rounded-lg text-center ">
+            <h1 id="race_info" class="text-3xl font-bold">Race Information</h1>
+        </header>
 
-        <!-- Race Results View -->
-        <section id="raceResults" class="w-2/3 p-6 bg-white shadow-md border rounded-lg">
-            <h2 class="text-2xl font-semibold mb-4">Race Results</h2>
-            <div id="qualify" class="mb-4">
-                <h3 class="text-xl font-semibold">Qualifying Results</h3>
-                <!-- Qualifying results content -->
-            </div>
-            <div id="result">
-                <h3 class="text-xl font-semibold">Race Results</h3>
-                <!-- Race results content -->
-            </div>
-        </section>
-    </div>
+        <!-- Flex container for the 3 boxes (Races, Qualifying, Race Results) -->
+        <div class="flex w-full space-x-4">
+            <!-- Races View -->
+            <section id="races" class="w-3/12 p-6 bg-white shadow-md border rounded-lg">
+                <h2 id="race_header" class="flex justify-center font-semibold mb-4 text-xl">Races</h2>
+                <div class="overflow-y-scroll max-h-96 border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                    <table class="min-w-full table-auto">
+                        <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <tr>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Rnd</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700 text-sm" id="race_table">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Qualifying Results View -->
+            <section id="qualifying" class="w-5/12 p-6 bg-white shadow-md border rounded-lg">
+                <h2 class="text-xl font-semibold mb-4 text-center">Qualifying</h2>
+                <div class="mb-4">
+                    <div class="overflow-y-scroll max-h-96 border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <tr>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Driver</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Const</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Q1</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Q2</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Q3</th>
+                                </tr>
+                            </thead>
+                            <tbody id="qual_table" class="text-gray-700 text-sm" id="qualifying_table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Race Results View -->
+            <section id="raceResults" class="w-4/12 p-6 bg-white shadow-md border rounded-lg">
+                <h2 class="text-xl font-semibold mb-4 text-center">Results</h2>
+                <div id="result">
+                    <div class="flex w-full space-x-4 justify-center mb-2">
+                        <!-- First box -->
+                        <div class="flex flex-col items-center mx-auto h-28 w-36 p-2 bg-white shadow-md border rounded-lg">
+                            <img class="h-14 w-14 mb-3 object-contain object-top" src="images/gold.png" alt="">
+                            <p class="text-sm font-semibold text-center">Kyle Scidmore</p>
+                        </div>
+            
+                        <!-- Second and third boxes -->
+                        <div class="flex flex-col items-center h-28 w-36 p-2 bg-white shadow-md border rounded-lg">
+                            <img class="h-14 w-14 mb-3 object-contain object-top" src="images/silver.png" alt="">
+                            <p class="text-sm font-semibold text-center">Kyle Scidmore</p>
+                        </div>
+            
+                        <div class="flex flex-col items-center h-28 w-36 p-2 bg-white shadow-md border rounded-lg">
+                            <img class="h-14 w-14 mb-3 object-contain object-top" src="images/bronze.png" alt="">
+                            <p class="text-sm font-semibold text-center">Kyle Scidmore</p>
+                        </div>
+                    </div>
+                    <div class="overflow-y-scroll max-h-96 border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <tr>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Const</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Laps</th>
+                                    <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700 text-sm" id="race_results_table">
+                                <!-- Race results will populate here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </article>
 
 
         <!-- Circuit Modal -->
@@ -111,26 +172,7 @@
                 <button class="close-modal mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
             </div>
         </aside>
-    
 
-    <!-- JavaScript 
-    <script>
-        // Helper function to toggle views
-        function showView(viewId) {
-            document.querySelectorAll('main > *').forEach(view => view.classList.add('hidden'));
-            document.querySelector(viewId).classList.remove('hidden');
-        }
-
-        document.querySelector('.season-selector').addEventListener('change', function () {
-            showView('#browse');  // Display the Browse view after selecting a season
-        });
-
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', function () {
-                button.closest('aside').classList.add('hidden');
-            });
-        });
-    </script> -->
 </body>
 
 </html>
