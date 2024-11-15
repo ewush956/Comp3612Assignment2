@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-    localStorage.clear();
+document.addEventListener("DOMContentLoaded", () =>{
+    
     let season = document.querySelector("#season");
     let current_season;
     let current_view = "home";
 
-    season.addEventListener("change", () => {
+    season.addEventListener("change", () =>{
 
         current_season = season.value;
 
@@ -12,13 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         process_race_data(current_season);
 
-
     });
+
     /*Event Listeners for Hardcoded Elements*/
 
     let home_button = document.querySelector("#home_button");
 
-    home_button.addEventListener("click", () => {
+    home_button.addEventListener("click", () =>{
 
         current_view = change_view(current_view);
         season.value = "select";
@@ -27,22 +27,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let logo = document.querySelector("#logo");
 
-    logo.addEventListener("click", () => {
+    logo.addEventListener("click", () =>{
 
         current_view = change_view("race");
         season.value = "select";
 
     });
 
+
+
+
 });
 
 /*Callback Hell (top down)*/
 
-function process_race_data(current_season) {
+function process_race_data(current_season){
 
     let stored_data = localStorage.getItem(`${current_season}RaceData`);
 
-    if (stored_data) {
+    if(stored_data){
 
         const race_data = JSON.parse(stored_data);
 
@@ -53,83 +56,92 @@ function process_race_data(current_season) {
         race_click(race_data);
 
 
-
-    } else {
+    }else{
 
         fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${current_season}`)
-            .then(response => response.json())
-            .then(data => {
+        .then(response => response.json())
+        .then(data =>{
 
-                localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
+            localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
 
-                console.log(data);
-                populate_race_data(data, current_season);
+            console.log(data);
+            populate_race_data(data, current_season);
 
-                race_click(data);
-                setup_constructor_modal();
+            race_click(current_season);
 
+        })
+        .catch(error =>{
 
-            })
-            .catch(error => {
-
-            });
+        });
 
     }
 }
 
-function race_click(race_data) {
+function race_click(current_season){
 
     let race_click = document.querySelector("#race_table");
 
-    race_click.addEventListener("click", (event) => {
+    race_click.addEventListener("click", (event) =>{
 
         let element = event.target;
 
-        if (element.tagName === "TD") {
+        if(element.tagName === "TD"){
 
             let row = element.closest("tr");
             let race_id = row.getAttribute("data-race-id");
-
+            
             console.log(race_id);
 
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?race=${race_id}`)
+            .then(response => response.json())
+            .then(qual_data =>{
+    
+    
+                console.log(qual_data);
+
+                populate_qaul_data(qual_data);
+
+                fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?race=${race_id}`)
                 .then(response => response.json())
-                .then(data => {
-
-
-                    console.log("right after fetch");
-                    console.dir(data);
-
-                    populate_qaul_data(data);
-
-                    //setup_constructor_modal();
-
-
+                .then(results_data =>{
+        
+        
+                    console.log(results_data);
+    
+                    populate_results_data(results_data);
+    
+        
                 })
-                .catch(error => {
-
+                .catch(error =>{
+        
                 });
 
+    
+            })
+            .catch(error =>{
+    
+            });
+
+            
+            
         }
-        //setup_constructor_modal();
 
 
     });
-
+    
 }
 
 /*Non-Callback Hell Functions*/
-function populate_race_data(data, current_season) {
+function populate_race_data(data, current_season){
 
     const race_list = document.querySelector("#race_table");
     race_list.innerHTML = "";
-    let round_temp = 1;
 
     let race_header = document.querySelector("#race_header");
 
     race_header.textContent = `${current_season} Races`;
 
-    for (let race of data) {
+    for(let race of data){
 
         let row = document.createElement("tr");
         row.classList.add("hover:bg-gray-200", "cursor-pointer");
@@ -137,8 +149,7 @@ function populate_race_data(data, current_season) {
 
         let round = document.createElement("td");
         round.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
-        round.textContent = `${round_temp}`;
-        round_temp++;
+        round.textContent = `${race.round}`;
 
         let name = document.createElement("td");
         name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -147,23 +158,25 @@ function populate_race_data(data, current_season) {
         row.appendChild(round);
         row.appendChild(name);
 
-        race_list.appendChild(row);
 
+
+        race_list.appendChild(row);
+        
     }
 
-};
+}
 
-function populate_qaul_data(data) {
+function populate_qaul_data(data){
 
     const qual_table = document.querySelector("#qual_table");
 
     qual_table.innerHTML = "";
 
     let race_info = document.querySelector("#race_info");
-    let constructors = [];
+
     /*add race info to header dynamically TODO*/
 
-    for (let d of data) {
+    for(let d of data){
 
         let row = document.createElement("tr");
 
@@ -174,13 +187,10 @@ function populate_qaul_data(data) {
         let name = document.createElement("td");
         name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
-        //add constructor to constructors
-        constructors.push(d.constructor);
 
         let constructor = document.createElement("td");
         constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
         constructor.textContent = `${d.constructor.name}`;
-        constructor.setAttribute("class", `constructor-modal`);
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -193,9 +203,7 @@ function populate_qaul_data(data) {
         let q3 = document.createElement("td");
         q3.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         q3.textContent = `${d.q3}`;
-
-
-
+        
         row.appendChild(pos);
         row.appendChild(name);
         row.appendChild(constructor);
@@ -206,34 +214,106 @@ function populate_qaul_data(data) {
         qual_table.appendChild(row);
 
     }
-    setup_constructor_modal(data, constructors);
 }
 
-function change_view(current_view) {
+function populate_results_data(data){
 
-    let home_view = document.querySelector("#home");
-    let race_view = document.querySelector("#race");
-    let buttons = document.querySelector("#nav_buttons");
-    let qual_table = document.querySelector("#qual_table");
-    let toasters = document.querySelector("#toaster");
+    const results_table = document.querySelector("#results_table");
+    const first = document.querySelector("#first");
+    const second = document.querySelector("#second");
+    const third = document.querySelector("#third");
+    const first_box = document.querySelector("#first_box");
+    const second_box = document.querySelector("#second_box");
+    const third_box = document.querySelector("#third_box");
+
+    results_table.innerHTML = "";
+
+    first.textContent = `${data[0].driver.forename} ${data[0].driver.surname}`;
+    second.textContent = `${data[1].driver.forename} ${data[1].driver.surname}`;
+    third.textContent = `${data[2].driver.forename} ${data[2].driver.surname}`;
+
+    first_box.classList.add("hover:bg-gray-200", "cursor-pointer");
+    second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
+    third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
+
+    for(let d of data){
+
+        let row = document.createElement("tr");
+
+        let pos = document.createElement("td");
+        pos.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+        pos.textContent = `${d.position}`;
+
+        let name = document.createElement("td");
+        name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        name.textContent = `${d.driver.forename} ${d.driver.surname}`;
+
+        let constructor = document.createElement("td");
+        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        constructor.textContent = `${d.constructor.name}`;
+
+        let laps = document.createElement("td");
+        laps.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+        laps.textContent = `${d.laps}`;
+
+        let points = document.createElement("td");
+        points.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+        points.textContent = `${d.points}`;
+
+        row.appendChild(pos);
+        row.appendChild(name);
+        row.appendChild(constructor);
+        row.appendChild(laps);
+        row.appendChild(points);
+
+        results_table.appendChild(row);
+
+    }
+}
+
+function change_view(current_view){
+
+    const home_view = document.querySelector("#home");
+    const race_view = document.querySelector("#race");
+    const buttons = document.querySelector("#nav_buttons");
+    const title = document.querySelector("#title")
+    const qual_table = document.querySelector("#qual_table");
+    const results_table = document.querySelector("#results_table");
+    const first = document.querySelector("#first");
+    const second = document.querySelector("#second");
+    const third = document.querySelector("#third");
+    const first_box = document.querySelector("#first_box");
+    const second_box = document.querySelector("#second_box");
+    const third_box = document.querySelector("#third_box");
+
+    first.textContent = "";
+    second.textContent = "";
+    third.textContent = "";
 
     qual_table.innerHTML = "";
+    results_table.innerHTML = "";
 
-    if (current_view === "home") {
+    first_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
+    second_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
+    third_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
+
+    if(current_view === "home"){
 
         home_view.classList.add("hidden");
+        title.classList.add("hidden");
         race_view.classList.remove("hidden");
-        buttons.classList.remove("hidden");
-        toasters.classList.add("hidden");
+        buttons.classList.remove("hidden", "lg:hidden");
+
         current_view = "race";
 
         return current_view;
 
-    } else {
+    }else{
 
         home_view.classList.remove("hidden");
+        title.classList.remove("hidden");
         race_view.classList.add("hidden");
-        buttons.classList.add("hidden");
+        buttons.classList.add("hidden", "lg:hidden");
 
         current_view = "home";
 
@@ -243,61 +323,4 @@ function change_view(current_view) {
 
 
 
-}
-function handleAddToFavorites(constructor) {
-    let favConstructors = JSON.parse(localStorage.getItem('favConstructors'));
-    if (!favConstructors) {
-        favConstructors = [];
-    }
-    if (!favConstructors.includes(constructor.id)) {
-        favConstructors.push(constructor.id);
-        localStorage.setItem('favConstructors', JSON.stringify(favConstructors));
-        console.log('Added to favorites');
-        document.querySelector('#toaster').textContent = "Added to favorites!";
-    } else {
-        console.log('Already in favorites');
-        document.querySelector('#toaster').textContent = "Already in favorites!";
-    }
-
-    // Show the toaster
-    let toaster = document.querySelector('#toaster');
-    toaster.classList.remove('hidden');
-
-    // Hide the toaster after 3 seconds
-    setTimeout(() => {
-        toaster.classList.add('hidden');
-    }, 2000);
-}
-function setup_constructor_modal(data, constructors) {
-    const rows = document.querySelectorAll(".constructor-modal"); // Use class instead of ID
-    console.log("rows: ");
-    console.dir(rows);
-    console.log("data");
-    console.dir(data);
-
-    rows.forEach((row, index) => {
-        row.addEventListener("click", () => {
-            console.log("click");
-            let constructorModal = document.querySelector('#constructorModal');
-            let closeModalButton = document.querySelector('#closeModal');
-            let constructor = data[index].constructor;
-
-            console.dir(data[index].constructor.id)
-            console.log(`data[index]:`);
-            console.dir(data[index]);
-            // Populate modal with constructor details
-
-            document.querySelector('#constructorName').textContent = constructor.name;
-            document.querySelector('#constructorNationality').textContent = constructor.nationality;
-            document.querySelector('#constructorUrl').href = constructor.url;
-            document.querySelector('#constructorUrl').textContent = "Wikipedia";
-
-            constructorModal.showModal();
-            closeModalButton.addEventListener('click', () => {
-                constructorModal.close();
-            });
-            let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor));
-        });
-    });
 }
