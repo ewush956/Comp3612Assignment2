@@ -1,0 +1,170 @@
+[
+    {
+        "name": "Basic Stables",
+        "low": {
+            "advance": 1,
+            "favor": 1,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 1,
+            "units": ["+1 Cavalry"]
+        },
+        "high": {
+            "advance": 1,
+            "favor": 2,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 2,
+            "units": ["+3 Elite Cavalry"]
+        },
+        "action": [
+            "Least Friendly Units",
+            "Grudge",
+            "Enemy Units/City Upgrades"
+        ]
+    },
+    {
+        "name": "Basic Docks",
+        "low": {
+            "advance": 1,
+            "favor": 1,
+            "philos": 0,
+            "commerce": 1,
+            "supply": 1,
+            "units": ["Trireme"]
+        },
+        "high": {
+            "advance": 1,
+            "favor": 2,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 2,
+            "units": ["+3 Elite Triremes"]
+        },
+        "action": [
+            "Map Objectives",
+            "Least Friendly Units",
+            "Enemy Units/City Upgrades"
+        ]
+    },
+    {
+        "name": "Basic Commerce",
+        "low": {
+            "advance": 1,
+            "favor": 1,
+            "philos": 0,
+            "commerce": 1,
+            "supply": 1,
+            "units": ["+1 Cavalry"]
+        },
+        "high": {
+            "advance": 1,
+            "favor": 2,
+            "philos": 0,
+            "commerce": 2,
+            "supply": 2,
+            "units": ["+2 Elite Cavalry"]
+        },
+        "action": [
+            "Enemy Units/City Upgrades",
+            "Most Settlements",
+            "Grudge"
+        ]
+    },
+    {
+        "name": "",
+        "low": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "high": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "action": [
+            "",
+            "",
+            ""
+        ]
+    },
+    {
+        "name": "",
+        "low": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "high": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "action": [
+            "",
+            "",
+            ""
+        ]
+    },
+    {
+        "name": "",
+        "low": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "high": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "action": [
+            "",
+            "",
+            ""
+        ]
+    },
+    {
+        "name": "",
+        "low": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "high": {
+            "advance": 0,
+            "favor": 0,
+            "philos": 0,
+            "commerce": 0,
+            "supply": 0,
+            "units": []
+        },
+        "action": [
+            "",
+            "",
+            ""
+        ]
+    }
+]
