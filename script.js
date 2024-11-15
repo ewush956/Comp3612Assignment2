@@ -419,11 +419,13 @@ function populate_constructor_table(constructor_ref, season) {
 
                 let nameCell = document.createElement('td');
                 nameCell.classList.add('py-3', 'px-6', 'border-b');
-                nameCell.textContent = item.constructor.name;
+                console.log("item:");
+                console.dir(item);
+                nameCell.textContent = item.name;
 
                 let driverCell = document.createElement('td');
                 driverCell.classList.add('py-3', 'px-6', 'border-b');
-                //driverCell.textContent = `${item.driver.forename} ${item.driver.surname}`;
+                driverCell.textContent = `${item.forename} ${item.surname}`;
 
                 let posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
