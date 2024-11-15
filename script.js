@@ -1,10 +1,10 @@
-document.addEventListener("DOMContentLoaded", () =>{
-    
+document.addEventListener("DOMContentLoaded", () => {
+
     let season = document.querySelector("#season");
     let current_season;
     let current_view = "home";
 
-    season.addEventListener("change", () =>{
+    season.addEventListener("change", () => {
 
         current_season = season.value;
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     let home_button = document.querySelector("#home_button");
 
-    home_button.addEventListener("click", () =>{
+    home_button.addEventListener("click", () => {
 
         current_view = change_view(current_view);
         season.value = "select";
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     let logo = document.querySelector("#logo");
 
-    logo.addEventListener("click", () =>{
+    logo.addEventListener("click", () => {
 
         current_view = change_view("race");
         season.value = "select";
@@ -41,11 +41,11 @@ document.addEventListener("DOMContentLoaded", () =>{
 
 /*Callback Hell (top down)*/
 
-function process_race_data(current_season){
+function process_race_data(current_season) {
 
     let stored_data = localStorage.getItem(`${current_season}RaceData`);
 
-    if(stored_data){
+    if (stored_data) {
 
         const race_data = JSON.parse(stored_data);
 
@@ -53,86 +53,86 @@ function process_race_data(current_season){
 
         populate_race_data(race_data, current_season);
 
-        race_click(race_data);
+        race_click(current_season);
 
 
-    }else{
+    } else {
 
         fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${current_season}`)
-        .then(response => response.json())
-        .then(data =>{
+            .then(response => response.json())
+            .then(data => {
 
-            localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
+                localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
 
-            console.log(data);
-            populate_race_data(data, current_season);
+                console.log(data);
+                populate_race_data(data, current_season);
 
-            race_click(current_season);
+                race_click(current_season);
 
-        })
-        .catch(error =>{
+            })
+            .catch(error => {
 
-        });
+            });
 
     }
 }
 
-function race_click(current_season){
+function race_click(current_season) {
 
     let race_click = document.querySelector("#race_table");
 
-    race_click.addEventListener("click", (event) =>{
+    race_click.addEventListener("click", (event) => {
 
         let element = event.target;
 
-        if(element.tagName === "TD"){
+        if (element.tagName === "TD") {
 
             let row = element.closest("tr");
             let race_id = row.getAttribute("data-race-id");
-            
+
             console.log(race_id);
 
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?race=${race_id}`)
-            .then(response => response.json())
-            .then(qual_data =>{
-    
-    
-                console.log(qual_data);
-
-                populate_qaul_data(qual_data);
-
-                fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?race=${race_id}`)
                 .then(response => response.json())
-                .then(results_data =>{
-        
-        
-                    console.log(results_data);
-    
-                    populate_results_data(results_data);
-    
-        
+                .then(qual_data => {
+
+
+                    console.log(qual_data);
+
+                    populate_qaul_data(qual_data, current_season);
+
+                    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?race=${race_id}`)
+                        .then(response => response.json())
+                        .then(results_data => {
+
+
+                            console.log(results_data);
+
+                            populate_results_data(results_data);
+
+
+                        })
+                        .catch(error => {
+
+                        });
+
+
                 })
-                .catch(error =>{
-        
+                .catch(error => {
+
                 });
 
-    
-            })
-            .catch(error =>{
-    
-            });
 
-            
-            
+
         }
 
 
     });
-    
+
 }
 
 /*Non-Callback Hell Functions*/
-function populate_race_data(data, current_season){
+function populate_race_data(data, current_season) {
 
     const race_list = document.querySelector("#race_table");
     race_list.innerHTML = "";
@@ -141,7 +141,7 @@ function populate_race_data(data, current_season){
 
     race_header.textContent = `${current_season} Races`;
 
-    for(let race of data){
+    for (let race of data) {
 
         let row = document.createElement("tr");
         row.classList.add("hover:bg-gray-200", "cursor-pointer");
@@ -161,12 +161,12 @@ function populate_race_data(data, current_season){
 
 
         race_list.appendChild(row);
-        
+
     }
 
 }
 
-function populate_qaul_data(data){
+function populate_qaul_data(data, current_season) {
 
     const qual_table = document.querySelector("#qual_table");
 
@@ -175,8 +175,10 @@ function populate_qaul_data(data){
     let race_info = document.querySelector("#race_info");
 
     /*add race info to header dynamically TODO*/
+    let constructors = [];
 
-    for(let d of data){
+
+    for (let d of data) {
 
         let row = document.createElement("tr");
 
@@ -191,6 +193,7 @@ function populate_qaul_data(data){
         let constructor = document.createElement("td");
         constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
         constructor.textContent = `${d.constructor.name}`;
+        constructor.setAttribute("class", `constructor-modal`);
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -203,7 +206,7 @@ function populate_qaul_data(data){
         let q3 = document.createElement("td");
         q3.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         q3.textContent = `${d.q3}`;
-        
+
         row.appendChild(pos);
         row.appendChild(name);
         row.appendChild(constructor);
@@ -212,11 +215,11 @@ function populate_qaul_data(data){
         row.appendChild(q3);
 
         qual_table.appendChild(row);
-
     }
+    setup_constructor_modal(data, current_season);
 }
 
-function populate_results_data(data){
+function populate_results_data(data) {
 
     const results_table = document.querySelector("#results_table");
     const first = document.querySelector("#first");
@@ -236,7 +239,7 @@ function populate_results_data(data){
     second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
     third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
 
-    for(let d of data){
+    for (let d of data) {
 
         let row = document.createElement("tr");
 
@@ -271,7 +274,7 @@ function populate_results_data(data){
     }
 }
 
-function change_view(current_view){
+function change_view(current_view) {
 
     const home_view = document.querySelector("#home");
     const race_view = document.querySelector("#race");
@@ -285,6 +288,8 @@ function change_view(current_view){
     const first_box = document.querySelector("#first_box");
     const second_box = document.querySelector("#second_box");
     const third_box = document.querySelector("#third_box");
+    let toasters = document.querySelector("#toaster");
+    let modals = document.querySelector("dialog");
 
     first.textContent = "";
     second.textContent = "";
@@ -297,18 +302,19 @@ function change_view(current_view){
     second_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
     third_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
 
-    if(current_view === "home"){
+    if (current_view === "home") {
 
         home_view.classList.add("hidden");
         title.classList.add("hidden");
         race_view.classList.remove("hidden");
         buttons.classList.remove("hidden", "lg:hidden");
+        toasters.classList.add("hidden");
 
         current_view = "race";
 
         return current_view;
 
-    }else{
+    } else {
 
         home_view.classList.remove("hidden");
         title.classList.remove("hidden");
@@ -321,6 +327,115 @@ function change_view(current_view){
 
     }
 
+}
+function handleAddToFavorites(constructor) {
+    let favConstructors = JSON.parse(localStorage.getItem('favConstructors'));
+    if (!favConstructors) {
+        favConstructors = [];
+    }
+    if (!favConstructors.includes(constructor.id)) {
+        favConstructors.push(constructor.id);
+        localStorage.setItem('favConstructors', JSON.stringify(favConstructors));
+        console.log('Added to favorites');
+        document.querySelector('#toaster').textContent = "Added to favorites!";
+    } else {
+        console.log('Already in favorites');
+        document.querySelector('#toaster').textContent = "Already in favorites!";
+    }
 
+    // Show the toaster
+    let toaster = document.querySelector('#toaster');
+    toaster.classList.remove('hidden');
 
+    // Hide the toaster after 3 seconds
+    setTimeout(() => {
+        toaster.classList.add('hidden');
+    }, 2000);
+}
+function setup_constructor_modal(data, current_season) {
+    console.log("setup_constructor_modal");
+    const rows = document.querySelectorAll(".constructor-modal"); // Use class instead of ID
+    console.log("rows: ");
+    console.dir(rows);
+    console.log("data");
+    console.dir(data);
+
+    rows.forEach((row, index) => {
+        row.addEventListener("click", () => {
+            console.log("click");
+            let constructorModal = document.querySelector('#constructorModal');
+            let closeModalButton = document.querySelector('#closeModal');
+            let constructor = data[index].constructor;
+            let constructor_ref = data[index].constructor.ref;
+            console.log("data");
+            console.dir(data);
+            console.dir(data[index].constructor.id)
+            console.log(`data[index]:`);
+            console.dir(data[index]);
+            // Populate modal with constructor details
+
+            document.querySelector('#constructorName').textContent = constructor.name;
+            document.querySelector('#constructorNationality').textContent = constructor.nationality;
+            document.querySelector('#constructorUrl').href = constructor.url;
+            document.querySelector('#constructorUrl').textContent = "Wikipedia";
+
+            populate_constructor_table(constructor_ref, current_season);
+
+            constructorModal.showModal();
+            document.body.classList.add('modal-open');
+            constructorModal.classList.remove('hidden');
+            closeModalButton.addEventListener('click', () => {
+                constructorModal.close();
+                document.body.classList.remove('modal-open');
+                constructorModal.classList.add('hidden');
+            });
+            constructorModal.addEventListener('close', () => {
+                document.body.classList.remove('modal-open');
+                constructorModal.classList.add('hidden');
+            });
+            let addToFavButton = document.querySelector('.addToFavorites');
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor));
+        });
+    });
+}
+function populate_constructor_table(constructor_ref, season) {
+    console.log(`constructor_ref: ${constructor_ref}, season: ${season}`);
+    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
+        .then(response => response.json())
+        .then(matchingConstructors => {
+            console.log("Matching Constructors:");
+            console.dir(matchingConstructors);
+
+            // Populate the table within the dialog tag
+            let raceResultsTable = document.querySelector('#race_results_table');
+            raceResultsTable.innerHTML = ''; // Clear any existing rows
+
+            matchingConstructors.forEach(item => {
+                let row = document.createElement('tr');
+
+                let roundCell = document.createElement('td');
+                roundCell.classList.add('py-3', 'px-6', 'border-b');
+                roundCell.textContent = item.round;
+
+                let nameCell = document.createElement('td');
+                nameCell.classList.add('py-3', 'px-6', 'border-b');
+                nameCell.textContent = item.constructor.name;
+
+                let driverCell = document.createElement('td');
+                driverCell.classList.add('py-3', 'px-6', 'border-b');
+                //driverCell.textContent = `${item.driver.forename} ${item.driver.surname}`;
+
+                let posCell = document.createElement('td');
+                posCell.classList.add('py-3', 'px-6', 'border-b');
+                posCell.textContent = item.position;
+
+                row.appendChild(roundCell);
+                row.appendChild(nameCell);
+                row.appendChild(driverCell);
+                row.appendChild(posCell);
+
+                raceResultsTable.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching constructor data:', error));
 }
