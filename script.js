@@ -429,7 +429,8 @@ function populate_constructor_table(constructor_ref, season) {
 
                 let posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
-                posCell.textContent = item.position;
+                posCell.textContent = item.positionOrder;
+
 
                 row.appendChild(roundCell);
                 row.appendChild(nameCell);
