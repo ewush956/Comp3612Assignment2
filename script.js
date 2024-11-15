@@ -97,9 +97,11 @@ function race_click(race_data) {
                 .then(data => {
 
 
-                    console.log(data);
+                    console.log("right after fetch");
+                    console.dir(data);
 
                     populate_qaul_data(data);
+
                     //setup_constructor_modal();
 
 
@@ -145,8 +147,6 @@ function populate_race_data(data, current_season) {
         row.appendChild(round);
         row.appendChild(name);
 
-
-
         race_list.appendChild(row);
 
     }
@@ -160,7 +160,7 @@ function populate_qaul_data(data) {
     qual_table.innerHTML = "";
 
     let race_info = document.querySelector("#race_info");
-
+    let constructors = [];
     /*add race info to header dynamically TODO*/
 
     for (let d of data) {
@@ -174,11 +174,13 @@ function populate_qaul_data(data) {
         let name = document.createElement("td");
         name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        //add constructor to constructors
+        constructors.push(d.constructor);
 
         let constructor = document.createElement("td");
         constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
         constructor.textContent = `${d.constructor.name}`;
-        constructor.setAttribute("id", `constructor-modal`);
+        constructor.setAttribute("class", `constructor-modal`);
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -201,11 +203,10 @@ function populate_qaul_data(data) {
         row.appendChild(q2);
         row.appendChild(q3);
 
-
         qual_table.appendChild(row);
-        setup_constructor_modal();
 
     }
+    setup_constructor_modal(data, constructors);
 }
 
 function change_view(current_view) {
@@ -214,6 +215,7 @@ function change_view(current_view) {
     let race_view = document.querySelector("#race");
     let buttons = document.querySelector("#nav_buttons");
     let qual_table = document.querySelector("#qual_table");
+    let toasters = document.querySelector("#toaster");
 
     qual_table.innerHTML = "";
 
@@ -222,7 +224,7 @@ function change_view(current_view) {
         home_view.classList.add("hidden");
         race_view.classList.remove("hidden");
         buttons.classList.remove("hidden");
-
+        toasters.classList.add("hidden");
         current_view = "race";
 
         return current_view;
@@ -242,19 +244,60 @@ function change_view(current_view) {
 
 
 }
-function setup_constructor_modal() {
+function handleAddToFavorites(constructor) {
+    let favConstructors = JSON.parse(localStorage.getItem('favConstructors'));
+    if (!favConstructors) {
+        favConstructors = [];
+    }
+    if (!favConstructors.includes(constructor.id)) {
+        favConstructors.push(constructor.id);
+        localStorage.setItem('favConstructors', JSON.stringify(favConstructors));
+        console.log('Added to favorites');
+        document.querySelector('#toaster').textContent = "Added to favorites!";
+    } else {
+        console.log('Already in favorites');
+        document.querySelector('#toaster').textContent = "Already in favorites!";
+    }
 
-    const rows = document.querySelectorAll("#constructor-modal");
-    console.log(rows);
-    rows.forEach(row => {
+    // Show the toaster
+    let toaster = document.querySelector('#toaster');
+    toaster.classList.remove('hidden');
+
+    // Hide the toaster after 3 seconds
+    setTimeout(() => {
+        toaster.classList.add('hidden');
+    }, 2000);
+}
+function setup_constructor_modal(data, constructors) {
+    const rows = document.querySelectorAll(".constructor-modal"); // Use class instead of ID
+    console.log("rows: ");
+    console.dir(rows);
+    console.log("data");
+    console.dir(data);
+
+    rows.forEach((row, index) => {
         row.addEventListener("click", () => {
             console.log("click");
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
+            let constructor = data[index].constructor;
+
+            console.dir(data[index].constructor.id)
+            console.log(`data[index]:`);
+            console.dir(data[index]);
+            // Populate modal with constructor details
+
+            document.querySelector('#constructorName').textContent = constructor.name;
+            document.querySelector('#constructorNationality').textContent = constructor.nationality;
+            document.querySelector('#constructorUrl').href = constructor.url;
+            document.querySelector('#constructorUrl').textContent = "Wikipedia";
+
             constructorModal.showModal();
             closeModalButton.addEventListener('click', () => {
                 constructorModal.close();
             });
+            let addToFavButton = document.querySelector('.addToFavorites');
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor));
         });
     });
 }
