@@ -34,9 +34,6 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     });
 
-
-
-
 });
 
 /*Callback Hell (top down)*/
