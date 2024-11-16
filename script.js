@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 /*Callback Hell (top down)*/
 function fetchSeasonData(season) {
 
-    let seasonData
+    let season_data
     const seasonKey = `season_${season}`;
     
     const storedData = localStorage.getItem(seasonKey);
@@ -50,10 +50,10 @@ function fetchSeasonData(season) {
     if (storedData) {
       console.log('Data already in localStorage');
       
-      seasonData = JSON.parse(storedData);
+      season_data = JSON.parse(storedData);
 
-      populate_race_data(seasonData);
-      race_click(seasonData);
+      populate_race_data(season_data);
+      race_click(season_data);
 
       return;
     }
@@ -62,8 +62,8 @@ function fetchSeasonData(season) {
     const qualificationDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?season=${season}`;
     const resultsDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?season=${season}`;
     
-    seasonData = {};
-    
+    season_data = {};
+    /*Fetch all three large data files*/
     fetch(raceDataUrl)
       .then(response => {
         if (!response.ok) {
@@ -72,7 +72,7 @@ function fetchSeasonData(season) {
         return response.json();
       })
       .then(raceData => {
-        seasonData.raceData = raceData;
+        season_data.raceData = raceData;
         return fetch(qualificationDataUrl);
       })
       .then(response => {
@@ -82,7 +82,7 @@ function fetchSeasonData(season) {
         return response.json();
       })
       .then(qualificationData => {
-        seasonData.qualificationData = qualificationData;
+        season_data.qualificationData = qualificationData;
         return fetch(resultsDataUrl);
       })
       .then(response => {
@@ -92,20 +92,20 @@ function fetchSeasonData(season) {
         return response.json();
       })
       .then(resultsData => {
-        seasonData.resultsData = resultsData;
+        season_data.resultsData = resultsData;
   
-        localStorage.setItem(seasonKey, JSON.stringify(seasonData));
+        localStorage.setItem(seasonKey, JSON.stringify(season_data));
         
-        console.log(seasonData);
-        populate_race_data(seasonData);
-        race_click(seasonData);
+        console.log(season_data);
+        populate_race_data(season_data);
+        race_click(season_data);
       })
       .catch(error => {
         console.error('An error occurred:', error.message);
       });
   }
 
-function race_click(seasonData){
+function race_click(season_data){
 
     let race_click = document.querySelector("#race_table");
 
@@ -120,11 +120,11 @@ function race_click(seasonData){
             
             console.log(race_id);
             
-            let qual_data = filter_data(seasonData, race_id, "qual");
+            let qual_data = filter_data(season_data, race_id, "qual");
 
             populate_qaul_data(qual_data);
 
-            let results_data = filter_data(seasonData, race_id, "results")
+            let results_data = filter_data(season_data, race_id, "results")
             
             populate_results_data(results_data);
         }
@@ -135,16 +135,16 @@ function race_click(seasonData){
 }
 
 /*Non-Callback Hell Functions*/
-function populate_race_data(seasonData){
+function populate_race_data(season_data){
 
     const race_list = document.querySelector("#race_table");
     race_list.innerHTML = "";
 
     let race_header = document.querySelector("#race_header");
 
-    race_header.textContent = `${seasonData.raceData[0].year} Races`;
+    race_header.textContent = `${season_data.raceData[0].year} Races`;
 
-    for(let race of seasonData.raceData){
+    for(let race of season_data.raceData){
 
         let row = document.createElement("tr");
         row.classList.add("hover:bg-gray-200", "cursor-pointer");
