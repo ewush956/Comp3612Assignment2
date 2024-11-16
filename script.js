@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let season = document.querySelector("#season");
         let current_season = season.value;
+        console.log(`current_season: ${season.value}`);
 
         current_view = change_view(current_view);
 
@@ -46,10 +47,10 @@ function fetchSeasonData(season) {
     const seasonKey = `season_${season}`;
 
     const storedData = localStorage.getItem(seasonKey);
-
     if (storedData) {
         console.log('Data already in localStorage');
-
+        console.log('Stored data:');
+        console.dir(storedData);
         season_data = JSON.parse(storedData);
 
         populate_race_data(season_data);
@@ -108,6 +109,7 @@ function fetchSeasonData(season) {
 function race_click(season_data) {
 
     let race_click = document.querySelector("#race_table");
+    let year = season_data.raceData[0].year;
 
     race_click.addEventListener("click", (event) => {
 
@@ -121,8 +123,10 @@ function race_click(season_data) {
             console.log(race_id);
 
             let qual_data = filter_data(season_data, race_id, "qual");
+            console.log(`season_data: ${season_data}`);
+            console.dir(season_data);
 
-            populate_qaul_data(qual_data);
+            populate_qaul_data(qual_data, year);
 
             let results_data = filter_data(season_data, race_id, "results")
 
@@ -131,6 +135,7 @@ function race_click(season_data) {
 
 
     });
+
 
 }
 
@@ -170,7 +175,6 @@ function populate_race_data(season_data) {
 }
 
 function populate_qaul_data(data, current_season) {
-
 
     const qual_table = document.querySelector("#qual_table");
 
@@ -409,7 +413,7 @@ function handleAddToFavorites(item, type) {
 
 function setup_constructor_modal(data, current_season) {
     console.log("setup_constructor_modal");
-    const rows = document.querySelectorAll(".constructor-modal"); // Use class instead of ID
+    const rows = document.querySelectorAll(".constructor-modal");
 
     rows.forEach((row, index) => {
         row.addEventListener("click", () => {
@@ -432,16 +436,12 @@ function setup_constructor_modal(data, current_season) {
     });
 }
 function populate_constructor_table(constructor_ref, season) {
-    console.log(`constructor_ref: ${constructor_ref}, season: ${season}`);
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingConstructors => {
-            console.log("Matching Constructors:");
-            console.dir(matchingConstructors);
 
-            // Populate the table within the dialog tag
             let raceResultsTable = document.querySelector('#race_results_table');
-            raceResultsTable.innerHTML = ''; // Clear any existing rows
+            raceResultsTable.innerHTML = '';
 
             matchingConstructors.forEach(item => {
                 let row = document.createElement('tr');
@@ -452,8 +452,6 @@ function populate_constructor_table(constructor_ref, season) {
 
                 let nameCell = document.createElement('td');
                 nameCell.classList.add('py-3', 'px-6', 'border-b');
-                console.log("item:");
-                console.dir(item);
                 nameCell.textContent = item.name;
 
                 let driverCell = document.createElement('td');
@@ -463,7 +461,6 @@ function populate_constructor_table(constructor_ref, season) {
                 let posCell = document.createElement('td');
                 posCell.classList.add('modal-hover', 'py-3', 'px-6', 'border-b');
                 posCell.textContent = item.positionOrder;
-
 
                 row.appendChild(roundCell);
                 row.appendChild(nameCell);
@@ -476,40 +473,35 @@ function populate_constructor_table(constructor_ref, season) {
         .catch(error => console.error('Error fetching constructor data:', error));
 }
 function setup_driver_modal(data, current_season) {
-    console.log("setup_driver_modal");
-    const rows = document.querySelectorAll(".driver-modal"); // Use class instead of ID
-    console.log("rows: ");
-    console.dir(rows);
-    console.log("data");
-    console.dir(data);
+    const rows = document.querySelectorAll(".driver-modal");
 
     rows.forEach((row, index) => {
         row.addEventListener("click", () => {
-            console.log("click");
+
             let driverModal = document.querySelector('#driverModal');
             let closeModalButton = document.querySelector('#closeDriverModal');
-            let driver = data[index].driver;
             let driver_ref = data[index].driver.ref;
-            console.log("data");
-            console.dir(data);
-            console.dir(data[index].driver.id)
-            console.log(`data[index]:`);
-            console.dir(data[index]);
-            // Populate modal with driver details
+            //Need to fetch driver data because the constructor data does not contain drivers age and url
 
-            document.querySelector('#driverName').textContent = `${driver.forename} ${driver.surname}`;
-            //document.querySelector('#DOB').textContent = driver.dob;
-            //undefined?
-            console.log(`DOB: ${driver.dob}`);
-            document.querySelector('#driverNationality').textContent = driver.nationality;
-            document.querySelector('#driverImage').src = driver.imageUrl;
+            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
+                .then(response => response.json())
+                .then(driver => {
 
+                    document.querySelector('#driverName').textContent = `${driver.forename} ${driver.surname}`;
+                    document.querySelector('#DOB').textContent = driver.dob;
+                    document.querySelector('#driverAge').textContent = calculate_age(driver.dob);
+                    document.querySelector('#driverNationality').textContent = driver.nationality;
+                    document.querySelector('#driverUrl').href = driver.url;
+                    document.querySelector('#driverUrl').textContent = "Wikipedia";
+                    document.querySelector('#driverUrl').href = driver.url;
+                    document.querySelector('#driverImage').src = driver.imageUrl;
 
-            populate_driver_table(driver_ref, current_season);
+                    populate_driver_table(driver_ref, current_season);
 
-            handle_modal(driverModal, closeModalButton);
-            let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(driver));
+                    handle_modal(driverModal, closeModalButton);
+                    let addToFavButton = document.querySelector('.addToFavorites');
+                    addToFavButton.addEventListener('click', () => handleAddToFavorites(driver));
+                });
         });
     });
 }
@@ -518,17 +510,19 @@ function populate_driver_table(driver_ref, season) {
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingDrivers => {
-            console.log("Matching Drivers:");
-            console.dir(matchingDrivers);
 
-            // Populate the table within the dialog tag
+            const seasonKey = `season_${season}`;
+            const storedData = JSON.parse(localStorage.getItem(seasonKey));
+            const resultsData = storedData ? storedData.resultsData : [];
+
             let driverResultsTable = document.querySelector('#driver_results_table');
             driverResultsTable.innerHTML = ''; // Clear existing results
-            driverImage = document.querySelector('#driverImage');
+            let driverImage = document.querySelector('#driverImage');
             driverImage.src = "images/driver_placeholder.png";
-
             matchingDrivers.forEach(item => {
+
                 const row = document.createElement('tr');
+                const result = resultsData.find(result => result.id === item.resultId);
 
                 const roundCell = document.createElement('td');
                 roundCell.classList.add('py-3', 'px-6', 'border-b');
@@ -538,18 +532,20 @@ function populate_driver_table(driver_ref, season) {
                 nameCell.classList.add('py-3', 'px-6', 'border-b');
                 nameCell.textContent = item.name;
 
-                const driverCell = document.createElement('td');
-                driverCell.classList.add('py-3', 'px-6', 'border-b');
-                driverCell.textContent = item.driver;
-
                 const posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
-                posCell.textContent = item.position;
+                posCell.textContent = result.position;
+
+                const pointsCell = document.createElement('td');
+                const points = result.points;
+                pointsCell.classList.add('py-3', 'px-6', 'border-b');
+                pointsCell.textContent = resultsData
+                pointsCell.textContent = points;
 
                 row.appendChild(roundCell);
                 row.appendChild(nameCell);
-                row.appendChild(driverCell);
                 row.appendChild(posCell);
+                row.appendChild(pointsCell);
 
                 driverResultsTable.appendChild(row);
             });
@@ -578,4 +574,15 @@ function handle_modal(modal, closeModalButton) {
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
     });
+}
+//Make a helper function that calculates the age of a driver
+function calculate_age(dob) {
+    let today = new Date();
+    let birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
 }
