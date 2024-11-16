@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    let season = document.querySelector("#season");
-    let current_season;
+
     let current_view = "home";
 
     season.addEventListener("change", () => {
 
-        current_season = season.value;
+        let season = document.querySelector("#season");
+        let current_season = season.value;
 
         current_view = change_view(current_view);
 
-        process_race_data(current_season);
+        fetchSeasonData(current_season);
 
     });
 
@@ -40,44 +40,72 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /*Callback Hell (top down)*/
+function fetchSeasonData(season) {
 
-function process_race_data(current_season) {
+    let season_data
+    const seasonKey = `season_${season}`;
 
-    let stored_data = localStorage.getItem(`${current_season}RaceData`);
+    const storedData = localStorage.getItem(seasonKey);
 
-    if (stored_data) {
+    if (storedData) {
+        console.log('Data already in localStorage');
 
-        const race_data = JSON.parse(stored_data);
+        season_data = JSON.parse(storedData);
 
-        console.log(race_data);
+        populate_race_data(season_data);
+        race_click(season_data);
 
-        populate_race_data(race_data, current_season);
-
-        race_click(current_season);
-
-
-    } else {
-
-        fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${current_season}`)
-            .then(response => response.json())
-            .then(data => {
-
-                localStorage.setItem(`${current_season}RaceData`, JSON.stringify(data));
-
-                console.log(data);
-                populate_race_data(data, current_season);
-
-                race_click(current_season);
-
-            })
-            .catch(error => {
-
-            });
-
+        return;
     }
+
+    const raceDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${season}`;
+    const qualificationDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?season=${season}`;
+    const resultsDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?season=${season}`;
+
+    season_data = {};
+    /*Fetch all three large data files*/
+    fetch(raceDataUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch race data');
+            }
+            return response.json();
+        })
+        .then(raceData => {
+            season_data.raceData = raceData;
+            return fetch(qualificationDataUrl);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch qualification data');
+            }
+            return response.json();
+        })
+        .then(qualificationData => {
+            season_data.qualificationData = qualificationData;
+            return fetch(resultsDataUrl);
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch results data');
+            }
+            return response.json();
+        })
+        .then(resultsData => {
+            season_data.resultsData = resultsData;
+
+            localStorage.setItem(seasonKey, JSON.stringify(season_data));
+
+            console.log(season_data);
+            populate_race_data(season_data);
+            race_click(season_data);
+        })
+        .catch(error => {
+            console.error('An error occurred:', error.message);
+        });
 }
 
-function race_click(current_season) {
+function race_click(season_data) {
 
     let race_click = document.querySelector("#race_table");
 
@@ -92,38 +120,13 @@ function race_click(current_season) {
 
             console.log(race_id);
 
-            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?race=${race_id}`)
-                .then(response => response.json())
-                .then(qual_data => {
+            let qual_data = filter_data(season_data, race_id, "qual");
 
+            populate_qaul_data(qual_data);
 
-                    console.log(qual_data);
+            let results_data = filter_data(season_data, race_id, "results")
 
-                    populate_qaul_data(qual_data, current_season);
-
-                    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?race=${race_id}`)
-                        .then(response => response.json())
-                        .then(results_data => {
-
-
-                            console.log(results_data);
-
-                            populate_results_data(results_data);
-
-
-                        })
-                        .catch(error => {
-
-                        });
-
-
-                })
-                .catch(error => {
-
-                });
-
-
-
+            populate_results_data(results_data);
         }
 
 
@@ -132,16 +135,16 @@ function race_click(current_season) {
 }
 
 /*Non-Callback Hell Functions*/
-function populate_race_data(data, current_season) {
+function populate_race_data(season_data) {
 
     const race_list = document.querySelector("#race_table");
     race_list.innerHTML = "";
 
     let race_header = document.querySelector("#race_header");
 
-    race_header.textContent = `${current_season} Races`;
+    race_header.textContent = `${season_data.raceData[0].year} Races`;
 
-    for (let race of data) {
+    for (let race of season_data.raceData) {
 
         let row = document.createElement("tr");
         row.classList.add("hover:bg-gray-200", "cursor-pointer");
@@ -167,6 +170,7 @@ function populate_race_data(data, current_season) {
 }
 
 function populate_qaul_data(data, current_season) {
+
 
     const qual_table = document.querySelector("#qual_table");
 
@@ -231,15 +235,29 @@ function populate_results_data(data) {
 
     results_table.innerHTML = "";
 
-    first.textContent = `${data[0].driver.forename} ${data[0].driver.surname}`;
-    second.textContent = `${data[1].driver.forename} ${data[1].driver.surname}`;
-    third.textContent = `${data[2].driver.forename} ${data[2].driver.surname}`;
-
     first_box.classList.add("hover:bg-gray-200", "cursor-pointer");
     second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
     third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
 
     for (let d of data) {
+
+        if (d.driver.position === 1) {
+
+            first.textContent = `${data.driver.forename} ${data.driver.surname}`;
+
+        }
+
+        if (d.driver.position === 2) {
+
+            second.textContent = `${data.driver.forename} ${data.driver.surname}`;
+
+        }
+
+        if (d.driver.position === 3) {
+
+            third.textContent = `${data.driver.forename} ${data.driver.surname}`;
+
+        }
 
         let row = document.createElement("tr");
 
@@ -272,6 +290,21 @@ function populate_results_data(data) {
         results_table.appendChild(row);
 
     }
+}
+
+function filter_data(data, race_id, type) {
+
+    if (type === "qual") {
+
+        return data.qualificationData.filter(entry => entry.race.id === parseInt(race_id));
+
+    } else if (type === "results") {
+
+        return data.resultsData.filter(entry => entry.race.id === parseInt(race_id));
+    }
+
+
+
 }
 
 function change_view(current_view) {
