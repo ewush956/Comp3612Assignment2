@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="bg-gray-100 font-mono leading-normal tracking-normal">
+<!-- <body class="bg-gray-100 font-mono leading-normal tracking-normal"> -->
+
+<body class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 font-mono leading-normal tracking-normal">
     <!-- Navbar -->
     <header class="bg-gray-800 text-white p-4 flex w-full items-center justify-between">
         <!-- Logo with fixed size -->
@@ -76,13 +78,14 @@
                 <h2 id="race_header" class="flex justify-center font-semibold mb-4 text-xl">Races</h2>
                 <div class="overflow-x-auto max-h-96 border border-gray-300 rounded-lg shadow-lg">
                     <table class="min-w-full table-auto">
-                        <thead class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal">
+                        <thead
+                            class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Rnd</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-700 text-sm" id="race_table">
+                        <tbody class="bg-gray-200 text-gray-700 text-sm" id="race_table">
                             <!-- Race data here -->
                         </tbody>
                     </table>
@@ -94,7 +97,8 @@
                 <h2 class="text-xl font-semibold mb-4 text-center">Qualifying</h2>
                 <div class="overflow-x-auto max-h-96 border border-gray-300 rounded-lg shadow-lg">
                     <table class="min-w-full table-auto">
-                        <thead class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal">
+                        <thead
+                            class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Driver</th>
@@ -104,7 +108,7 @@
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Q3</th>
                             </tr>
                         </thead>
-                        <tbody id="qual_table" class="text-gray-700 text-sm" id="qualifying_table">
+                        <tbody id="qual_table" class="bg-gray-200 text-gray-800 text-sm" id="qualifying_table">
                             <!-- Qualifying results here -->
                         </tbody>
                     </table>
@@ -135,7 +139,8 @@
                 </div>
                 <div class="overflow-x-auto max-h-64 border border-gray-300 rounded-lg shadow-lg">
                     <table class="min-w-full table-auto">
-                        <thead class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal">
+                        <thead
+                            class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
@@ -184,35 +189,52 @@
                     </table>
                 </div>
             </dialog>
+            <dialog id="driverModal"
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3/5 max-h-screen overflow-y-auto">
+                <aside class="flex-1 max-w-sm">
+                    <h2 class="text-xl font-semibold mb-4 text-center">Driver Details</h2>
+                    <div id="driverDetails" class="mb-6">
+                        <!-- Driver details will be populated here -->
+                        <p class="mb-2"><strong>Name:</strong> <span id="driverName"></span></p>
+                        <p class="mb-2"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
+                        <p class="mb-2"><strong>Age:</strong> <span id="driverAge"></span></p>
+                        <p class="mb-2"><strong>Nationality:</strong> <span id="driverNationality"></span></p>
+                        <p class="mb-2"><strong>Team:</strong> <span id="driverTeam"></span></p>
+                    </div>
+                    <img id="driverImage" src="" alt="Driver Image" class="w-full mt-4 rounded mb-6">
+                    <button class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
+                        Favorites</button>
+                    <button id="closeDriverModal"
+                        class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                </aside>
+
+                <div class="flex-2 overflow-x-auto">
+                    <table class="min-w-full bg-white border">
+                        <thead class="sticky top-0 bg-white z-10">
+                            <tr>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Round</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Driver</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700 text-sm" id="driver_results_table">
+                            <!-- Driver results will populate here -->
+                        </tbody>
+                    </table>
+                </div>
+            </dialog>
 
 
 
 
             <!-- Add a temporary visual notification (toaster) -->
-            <div id="toaster" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded">Added
+            <div id="toaster" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-999">
+                Added
                 to Favorites
             </div>
         </div>
     </article>
-
-
-    <!-- Circuit Modal -->
-    <aside id="circuit" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded p-4 w-1/2">
-            <h3 class="text-xl font-semibold mb-4">Circuit Details</h3>
-            <!-- Circuit details content -->
-            <button class="close-modal mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
-        </div>
-    </aside>
-
-    <!-- Driver Modal -->
-    <aside id="driver" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded p-4 w-1/2">
-            <h3 class="text-xl font-semibold mb-4">Driver Details</h3>
-            <!-- Driver details content -->
-            <button class="close-modal mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
-        </div>
-    </aside>
 
     <!-- Constructor Modal 
     <aside id="constructor" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
