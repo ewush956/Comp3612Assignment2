@@ -152,7 +152,7 @@ function populate_race_data(data, current_season) {
         round.textContent = `${race.round}`;
 
         let name = document.createElement("td");
-        name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+        name.classList.add("modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${race.name}`;
 
         row.appendChild(round);
@@ -187,13 +187,12 @@ function populate_qaul_data(data, current_season) {
         pos.textContent = `${d.position}`;
 
         let name = document.createElement("td");
-        name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        name.classList.add("driver-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         let constructor = document.createElement("td");
-        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         constructor.textContent = `${d.constructor.name}`;
-        constructor.setAttribute("class", `constructor-modal`);
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -217,6 +216,7 @@ function populate_qaul_data(data, current_season) {
         qual_table.appendChild(row);
     }
     setup_constructor_modal(data, current_season);
+    setup_driver_modal(data, current_season);
 }
 
 function populate_results_data(data) {
@@ -252,7 +252,7 @@ function populate_results_data(data) {
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         let constructor = document.createElement("td");
-        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
         constructor.textContent = `${d.constructor.name}`;
 
         let laps = document.createElement("td");
@@ -328,6 +328,7 @@ function change_view(current_view) {
     }
 
 }
+/* Works with constructors
 function handleAddToFavorites(constructor) {
     let favConstructors = JSON.parse(localStorage.getItem('favConstructors'));
     if (!favConstructors) {
@@ -348,31 +349,41 @@ function handleAddToFavorites(constructor) {
     toaster.classList.remove('hidden');
 
     // Hide the toaster after 3 seconds
-    setTimeout(() => {
-        toaster.classList.add('hidden');
-    }, 2000);
+    //setTimeout(() => { toaster.classList.add('hidden'); }, 2000);
+    showToaster();
 }
+    */
+function handleAddToFavorites(item, type) {
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+
+    if (!favorites[type][item.id]) {
+        favorites[type][item.id] = item;
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        console.log('Added to favorites');
+        document.querySelector('#toaster').textContent = "Added to favorites!";
+    } else {
+        console.log('Already in favorites');
+        document.querySelector('#toaster').textContent = "Already in favorites!";
+    }
+
+    // Show the toaster
+    let toaster = document.querySelector('#toaster');
+    toaster.classList.remove('hidden');
+
+    // Hide the toaster after 3 seconds
+    showToaster();
+}
+
 function setup_constructor_modal(data, current_season) {
     console.log("setup_constructor_modal");
     const rows = document.querySelectorAll(".constructor-modal"); // Use class instead of ID
-    console.log("rows: ");
-    console.dir(rows);
-    console.log("data");
-    console.dir(data);
 
     rows.forEach((row, index) => {
         row.addEventListener("click", () => {
-            console.log("click");
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
             let constructor = data[index].constructor;
             let constructor_ref = data[index].constructor.ref;
-            console.log("data");
-            console.dir(data);
-            console.dir(data[index].constructor.id)
-            console.log(`data[index]:`);
-            console.dir(data[index]);
-            // Populate modal with constructor details
 
             document.querySelector('#constructorName').textContent = constructor.name;
             document.querySelector('#constructorNationality').textContent = constructor.nationality;
@@ -380,21 +391,10 @@ function setup_constructor_modal(data, current_season) {
             document.querySelector('#constructorUrl').textContent = "Wikipedia";
 
             populate_constructor_table(constructor_ref, current_season);
+            handle_modal(constructorModal, closeModalButton);
 
-            constructorModal.showModal();
-            document.body.classList.add('modal-open');
-            constructorModal.classList.remove('hidden');
-            closeModalButton.addEventListener('click', () => {
-                constructorModal.close();
-                document.body.classList.remove('modal-open');
-                constructorModal.classList.add('hidden');
-            });
-            constructorModal.addEventListener('close', () => {
-                document.body.classList.remove('modal-open');
-                constructorModal.classList.add('hidden');
-            });
             let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor));
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructor"));
         });
     });
 }
@@ -428,7 +428,7 @@ function populate_constructor_table(constructor_ref, season) {
                 driverCell.textContent = `${item.forename} ${item.surname}`;
 
                 let posCell = document.createElement('td');
-                posCell.classList.add('py-3', 'px-6', 'border-b');
+                posCell.classList.add('modal-hover', 'py-3', 'px-6', 'border-b');
                 posCell.textContent = item.positionOrder;
 
 
@@ -441,4 +441,108 @@ function populate_constructor_table(constructor_ref, season) {
             });
         })
         .catch(error => console.error('Error fetching constructor data:', error));
+}
+function setup_driver_modal(data, current_season) {
+    console.log("setup_driver_modal");
+    const rows = document.querySelectorAll(".driver-modal"); // Use class instead of ID
+    console.log("rows: ");
+    console.dir(rows);
+    console.log("data");
+    console.dir(data);
+
+    rows.forEach((row, index) => {
+        row.addEventListener("click", () => {
+            console.log("click");
+            let driverModal = document.querySelector('#driverModal');
+            let closeModalButton = document.querySelector('#closeDriverModal');
+            let driver = data[index].driver;
+            let driver_ref = data[index].driver.ref;
+            console.log("data");
+            console.dir(data);
+            console.dir(data[index].driver.id)
+            console.log(`data[index]:`);
+            console.dir(data[index]);
+            // Populate modal with driver details
+
+            document.querySelector('#driverName').textContent = `${driver.forename} ${driver.surname}`;
+            //document.querySelector('#DOB').textContent = driver.dob;
+            //undefined?
+            console.log(`DOB: ${driver.dob}`);
+            document.querySelector('#driverNationality').textContent = driver.nationality;
+            document.querySelector('#driverImage').src = driver.imageUrl;
+
+
+            populate_driver_table(driver_ref, current_season);
+
+            handle_modal(driverModal, closeModalButton);
+            let addToFavButton = document.querySelector('.addToFavorites');
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(driver));
+        });
+    });
+}
+function populate_driver_table(driver_ref, season) {
+    console.log(`driver_ref: ${driver_ref}, season: ${season}`);
+    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
+        .then(response => response.json())
+        .then(matchingDrivers => {
+            console.log("Matching Drivers:");
+            console.dir(matchingDrivers);
+
+            // Populate the table within the dialog tag
+            let driverResultsTable = document.querySelector('#driver_results_table');
+            driverResultsTable.innerHTML = ''; // Clear existing results
+            driverImage = document.querySelector('#driverImage');
+            driverImage.src = "images/driver_placeholder.png";
+
+            matchingDrivers.forEach(item => {
+                const row = document.createElement('tr');
+
+                const roundCell = document.createElement('td');
+                roundCell.classList.add('py-3', 'px-6', 'border-b');
+                roundCell.textContent = item.round;
+
+                const nameCell = document.createElement('td');
+                nameCell.classList.add('py-3', 'px-6', 'border-b');
+                nameCell.textContent = item.name;
+
+                const driverCell = document.createElement('td');
+                driverCell.classList.add('py-3', 'px-6', 'border-b');
+                driverCell.textContent = item.driver;
+
+                const posCell = document.createElement('td');
+                posCell.classList.add('py-3', 'px-6', 'border-b');
+                posCell.textContent = item.position;
+
+                row.appendChild(roundCell);
+                row.appendChild(nameCell);
+                row.appendChild(driverCell);
+                row.appendChild(posCell);
+
+                driverResultsTable.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching driver data:', error));
+}
+function showToaster() {
+    const toaster = document.querySelector('#toaster');
+    toaster.classList.add('show');
+    setTimeout(() => {
+        toaster.classList.remove('show');
+    }, 2000); // Adjust the timeout duration as needed
+}
+function handle_modal(modal, closeModalButton) {
+    modal.showModal();
+    document.body.classList.add('modal-open');
+    modal.classList.remove('hidden');
+
+    closeModalButton.addEventListener('click', () => {
+        modal.close();
+        document.body.classList.remove('modal-open');
+        modal.classList.add('hidden');
+    });
+
+    modal.addEventListener('close', () => {
+        document.body.classList.remove('modal-open');
+        modal.classList.add('hidden');
+    });
 }
