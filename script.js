@@ -35,9 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-
-
-
 });
 
 /*Callback Hell (top down)*/
@@ -229,6 +226,7 @@ function populate_qaul_data(data, current_season) {
 
 function populate_results_data(data) {
 
+    console.log(data);
     const results_table = document.querySelector("#results_table");
     const first = document.querySelector("#first");
     const second = document.querySelector("#second");
@@ -245,21 +243,21 @@ function populate_results_data(data) {
 
     for (let d of data) {
 
-        if (d.driver.position === 1) {
+        if (d.position === 1) {
 
-            first.textContent = `${data.driver.forename} ${data.driver.surname}`;
-
-        }
-
-        if (d.driver.position === 2) {
-
-            second.textContent = `${data.driver.forename} ${data.driver.surname}`;
+            first.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         }
 
-        if (d.driver.position === 3) {
+        if (d.position === 2) {
 
-            third.textContent = `${data.driver.forename} ${data.driver.surname}`;
+            second.textContent = `${d.driver.forename} ${d.driver.surname}`;
+
+        }
+
+        if (d.position === 3) {
+
+            third.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         }
 
