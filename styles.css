@@ -15,3 +15,42 @@ body.modal-open::before {
     z-index: 999;
 
 }
+
+.modal-hover {
+    transition: background-color 0.3s ease, border-radius 0.3s ease;
+    border-radius: 0.25rem;
+    /* Tailwind's rounded */
+}
+
+.modal-hover:hover {
+    background-color: #cbd5e1;
+    /* Tailwind's bg-gray-300 */
+    cursor: pointer;
+    border-radius: 0.375rem;
+    /* Tailwind's rounded-md */
+}
+
+#toaster {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    transform: translateY(20px);
+    position: fixed;
+    bottom: 55%;
+    right: 85%;
+    transform: translate(50%, 50%);
+    background-color: #38a169;
+    /* bg-green-500 */
+    color: white;
+    padding: 20px 32px;
+    /* px-4 py-2 */
+    border-radius: 8px;
+    /* rounded */
+    z-index: 999;
+    font-size: 1.25rem;
+    /* Increase font size */
+}
+
+#toaster.show {
+    opacity: 1;
+    transform: translate(50%, 0);
+}
