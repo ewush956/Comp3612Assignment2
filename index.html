@@ -203,7 +203,8 @@
                                 class="text-blue-500 underline"></a></p>
                     </div>
                     <img id="driverImage" src="" alt="Driver Image" class="w-full mt-4 rounded mb-6">
-                    <button class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
+                    <button id="addDriverToFav"
+                        class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
                         Favorites</button>
                     <button id="closeDriverModal"
                         class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
@@ -225,9 +226,43 @@
                     </table>
                 </div>
             </dialog>
-
-
-
+            <dialog id="favoritesModal"
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-col gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3/5 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Favorites</h2>
+                    <div>
+                        <button id="emptyFavorites" class="bg-red-500 text-white px-4 py-2 rounded mr-2">Empty
+                            Favorites</button>
+                        <button id="closeFavoritesModal" class="bg-gray-500 text-white px-4 py-2 rounded">Close</button>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Drivers</h3>
+                        <table id="driver_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_drivers_table">
+                                <!-- Favorite drivers will populate here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Constructors</h3>
+                        <table id="constructor_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_constructors_table">
+                                <!-- Favorite constructors will populate here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Circuits</h3>
+                        <table id="circuit_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_circuits_table">
+                                <!-- Favorite circuits will populate here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </dialog>
 
             <!-- Add a temporary visual notification (toaster) -->
             <div id="toaster" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-999">
