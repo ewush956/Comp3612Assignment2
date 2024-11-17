@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
+    //localStorage.clear();
 
     let current_view = "home";
 
@@ -35,6 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    let favorites_button = document.querySelector("#favorites_button");
+    favorites_button.addEventListener("click", () => setup_favorites_modal());
+
 });
 
 /*Callback Hell (top down)*/
@@ -45,9 +48,6 @@ function fetchSeasonData(season) {
 
     const storedData = localStorage.getItem(seasonKey);
     if (storedData) {
-        console.log('Data already in localStorage');
-        console.log('Stored data:');
-        console.dir(storedData);
         season_data = JSON.parse(storedData);
 
         populate_race_data(season_data);
@@ -111,7 +111,6 @@ function race_click(season_data) {
     race_click.addEventListener("click", (event) => {
 
         let element = event.target;
-
         if (element.tagName === "TD") {
 
             let row = element.closest("tr");
@@ -363,36 +362,16 @@ function change_view(current_view) {
     }
 
 }
-/* Works with constructors
-function handleAddToFavorites(constructor) {
-    let favConstructors = JSON.parse(localStorage.getItem('favConstructors'));
-    if (!favConstructors) {
-        favConstructors = [];
-    }
-    if (!favConstructors.includes(constructor.id)) {
-        favConstructors.push(constructor.id);
-        localStorage.setItem('favConstructors', JSON.stringify(favConstructors));
-        console.log('Added to favorites');
-        document.querySelector('#toaster').textContent = "Added to favorites!";
-    } else {
-        console.log('Already in favorites');
-        document.querySelector('#toaster').textContent = "Already in favorites!";
-    }
-
-    // Show the toaster
-    let toaster = document.querySelector('#toaster');
-    toaster.classList.remove('hidden');
-
-    // Hide the toaster after 3 seconds
-    //setTimeout(() => { toaster.classList.add('hidden'); }, 2000);
-    showToaster();
-}
-    */
 function handleAddToFavorites(item, type) {
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+    let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.circuitId];
+    if (!item_check) {
+        //favorites[type][item.id] = item;
+        //favorites[type][item.id] = item.name;
+        if (type == "drivers") favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
+        else if (type == "constructors") favorites[type][item.id] = item.name;
+        else if (type == "circuits") favorites[type][item.circuitId] = item.name;
 
-    if (!favorites[type][item.id]) {
-        favorites[type][item.id] = item;
         localStorage.setItem('favorites', JSON.stringify(favorites));
         console.log('Added to favorites');
         document.querySelector('#toaster').textContent = "Added to favorites!";
@@ -404,9 +383,11 @@ function handleAddToFavorites(item, type) {
     // Show the toaster
     let toaster = document.querySelector('#toaster');
     toaster.classList.remove('hidden');
-
+    console.log('showing toaster');
     // Hide the toaster after 3 seconds
     showToaster();
+    console.log('favorites after add:');
+    console.dir(favorites);
 }
 
 function setup_constructor_modal(data, current_season) {
@@ -429,7 +410,7 @@ function setup_constructor_modal(data, current_season) {
             handle_modal(constructorModal, closeModalButton);
 
             let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructor"));
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
         });
     });
 }
@@ -480,7 +461,6 @@ function setup_driver_modal(data, current_season) {
             let closeModalButton = document.querySelector('#closeDriverModal');
             let driver_ref = data[index].driver.ref;
             //Need to fetch driver data because the constructor data does not contain drivers age and url
-
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
                 .then(response => response.json())
                 .then(driver => {
@@ -492,13 +472,13 @@ function setup_driver_modal(data, current_season) {
                     document.querySelector('#driverUrl').href = driver.url;
                     document.querySelector('#driverUrl').textContent = "Wikipedia";
                     document.querySelector('#driverUrl').href = driver.url;
-                    document.querySelector('#driverImage').src = driver.imageUrl;
+                    document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
 
                     populate_driver_table(driver_ref, current_season);
 
                     handle_modal(driverModal, closeModalButton);
-                    let addToFavButton = document.querySelector('.addToFavorites');
-                    addToFavButton.addEventListener('click', () => handleAddToFavorites(driver));
+                    let addToFavButton = document.querySelector('#addDriverToFav');
+                    addToFavButton.addEventListener('click', () => handleAddToFavorites(driver, "drivers"));
                 });
         });
     });
@@ -550,14 +530,27 @@ function populate_driver_table(driver_ref, season) {
         })
         .catch(error => console.error('Error fetching driver data:', error));
 }
-function showToaster() {
-    const toaster = document.querySelector('#toaster');
-    toaster.classList.add('show');
-    setTimeout(() => {
-        toaster.classList.remove('show');
-    }, 2000); // Adjust the timeout duration as needed
+function setup_favorites_modal() {
+
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+    const driverFavoritesTable = document.querySelector('#driver_favorites_table');
+    const constructorFavoritesTable = document.querySelector('#constructor_favorites_table');
+    const circuitFavoritesTable = document.querySelector('#circuit_favorites_table');
+    const favoritesButton = document.querySelector('#favorites_button');
+    const modal = document.querySelector('#favoritesModal');
+    const closeModal = document.querySelector('#closeFavoritesModal');
+
+    driverFavoritesTable.innerHTML = '';
+    constructorFavoritesTable.innerHTML = '';
+    circuitFavoritesTable.innerHTML = '';
+
+    console.log("favorites:");
+    console.dir(favorites);
+    favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
+
 }
 function handle_modal(modal, closeModalButton) {
+    console.log('handle_modal');
     modal.showModal();
     document.body.classList.add('modal-open');
     modal.classList.remove('hidden');
@@ -572,6 +565,13 @@ function handle_modal(modal, closeModalButton) {
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
     });
+}
+function showToaster() {
+    const toaster = document.querySelector('#toaster');
+    toaster.classList.add('show');
+    setTimeout(() => {
+        toaster.classList.remove('show');
+    }, 2000); // Adjust the timeout duration as needed
 }
 //Make a helper function that calculates the age of a driver
 function calculate_age(dob) {
