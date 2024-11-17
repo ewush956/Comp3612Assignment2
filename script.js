@@ -95,7 +95,7 @@ function fetchSeasonData(season) {
             localStorage.setItem(seasonKey, JSON.stringify(season_data));
 
             console.log(season_data);
-            populate_race_data(season_data);
+            populate_race_data(season_data, "");
             race_click(season_data);
         })
         .catch(error => {
@@ -104,10 +104,28 @@ function fetchSeasonData(season) {
 }
 
 function race_click(season_data) {
+    let race_sort = document.querySelector("#race_head");
 
+    let qual_sort = document.querySelector("#qual_head");
+
+    let results_sort = document.querySelector("#results_head");
     let race_click = document.querySelector("#race_table");
     let year = season_data.raceData[0].year;
+    race_sort.addEventListener("click", (event) => {
 
+        let element = event.target;
+
+        if (element.tagName === "TH") {
+
+            let cell = element;
+            let header = cell.textContent;
+
+            console.log(header);
+
+            populate_race_data(season_data, header);
+
+        }
+    });
     race_click.addEventListener("click", (event) => {
 
         let element = event.target;
@@ -117,26 +135,54 @@ function race_click(season_data) {
             let race_id = row.getAttribute("data-race-id");
 
             console.log(race_id);
-
+            populate_race_info(season_data, race_id);
             let qual_data = filter_data(season_data, race_id, "qual");
             console.log(`season_data: ${season_data}`);
             console.dir(season_data);
 
-            populate_qaul_data(qual_data, year);
+            populate_qaul_data(qual_data, "", year);
+
+            qual_sort.addEventListener("click", (event) => {
+
+                let element = event.target;
+
+                if (element.tagName === "TH") {
+
+                    let cell = element;
+                    let header = cell.textContent;
+
+                    console.log(header);
+
+                    populate_qaul_data(qual_data, header, year);
+
+                }
+            });
 
             let results_data = filter_data(season_data, race_id, "results")
 
-            populate_results_data(results_data);
+            populate_results_data(results_data, "");
+
+            results_sort.addEventListener("click", (event) => {
+
+                let element = event.target;
+
+                if (element.tagName === "TH") {
+
+                    let cell = element;
+                    let header = cell.textContent;
+
+                    console.log(header);
+
+                    populate_results_data(results_data, header);
+
+                }
+            });
         }
-
-
     });
-
-
 }
 
 /*Non-Callback Hell Functions*/
-function populate_race_data(season_data) {
+function populate_race_data(season_data, header) {
 
     const race_list = document.querySelector("#race_table");
     race_list.innerHTML = "";
@@ -145,7 +191,18 @@ function populate_race_data(season_data) {
 
     race_header.textContent = `${season_data.raceData[0].year} Races`;
 
-    for (let race of season_data.raceData) {
+    const sorted_data = [...season_data.raceData].sort((a, b) => {
+        if (header === "Name") {
+
+            return a.name > b.name ? 1 : (a.name < b.name ? -1 : 0);
+        } else if (header === "Rnd") {
+
+            return a.round - b.round;
+        }
+        return 0;
+    });
+
+    for (let race of sorted_data) {
 
         let row = document.createElement("tr");
         row.classList.add("hover:bg-gray-200", "cursor-pointer");
@@ -170,19 +227,43 @@ function populate_race_data(season_data) {
 
 }
 
-function populate_qaul_data(data, current_season) {
+function populate_qaul_data(data, header, year) {
 
     const qual_table = document.querySelector("#qual_table");
 
     qual_table.innerHTML = "";
 
-    let race_info = document.querySelector("#race_info");
+    const sorted_data = [...data].sort((a, b) => {
 
-    /*add race info to header dynamically TODO*/
-    let constructors = [];
+        if (header === "Pos") {
+
+            return a.position - b.position;
+        } else if (header === "Driver") {
+
+            const full_name_a = `${a.driver.forename} ${a.driver.surname}`;
+            const full_name_b = `${b.driver.forename} ${b.driver.surname}`;
+            return full_name_a > full_name_b ? 1 : full_name_a < full_name_b ? -1 : 0;
+        } else if (header === "Const") {
+
+            const constructor_name_a = a.constructor.name;
+            const constructor_name_b = b.constructor.name;
 
 
-    for (let d of data) {
+            return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
+        } else if (header === "Q1") {
+
+            return time_to_seconds(a.q1) - time_to_seconds(b.q1);
+        } else if (header === "Q2") {
+
+            return time_to_seconds(a.q2) - time_to_seconds(b.q2);
+        } else if (header === "Q3") {
+
+            return time_to_seconds(a.q3) - time_to_seconds(b.q3);
+        }
+        return 0;
+    });
+
+    for (let d of sorted_data) {
 
         let row = document.createElement("tr");
 
@@ -219,11 +300,11 @@ function populate_qaul_data(data, current_season) {
 
         qual_table.appendChild(row);
     }
-    setup_constructor_modal(data, current_season);
-    setup_driver_modal(data, current_season);
+    setup_constructor_modal(data, year);
+    setup_driver_modal(data, year);
 }
 
-function populate_results_data(data) {
+function populate_results_data(data, header) {
 
     console.log(data);
     const results_table = document.querySelector("#results_table");
@@ -240,7 +321,35 @@ function populate_results_data(data) {
     second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
     third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
 
-    for (let d of data) {
+    const sorted_data = [...data].sort((a, b) => {
+        if (header === "Pos") {
+
+            return a.position - b.position;
+        } else if (header === "Driver") {
+
+            const full_name_a = `${a.driver.forename} ${a.driver.surname}`;
+            const full_name_b = `${b.driver.forename} ${b.driver.surname}`;
+
+
+            return full_name_a > full_name_b ? 1 : full_name_a < full_name_b ? -1 : 0;
+        } else if (header === "Const") {
+
+            const constructor_name_a = a.constructor.name;
+            const constructor_name_b = b.constructor.name;
+
+
+            return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
+        } else if (header === "Laps") {
+
+            return b.laps - a.laps;
+        } else if (header = "Pts") {
+
+            return b.points - a.points;
+        }
+        return 0;
+    });
+
+    for (let d of sorted_data) {
 
         if (d.position === 1) {
 
@@ -266,9 +375,9 @@ function populate_results_data(data) {
         pos.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         pos.textContent = `${d.position}`;
 
-        let name = document.createElement("td");
-        name.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
-        name.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        let driver = document.createElement("td");
+        driver.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        driver.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         let constructor = document.createElement("td");
         constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
@@ -283,7 +392,7 @@ function populate_results_data(data) {
         points.textContent = `${d.points}`;
 
         row.appendChild(pos);
-        row.appendChild(name);
+        row.appendChild(driver);
         row.appendChild(constructor);
         row.appendChild(laps);
         row.appendChild(points);
@@ -291,6 +400,35 @@ function populate_results_data(data) {
         results_table.appendChild(row);
 
     }
+}
+function populate_race_info(data, race_id) {
+
+    let race = data.raceData.find(race => race.id === parseInt(race_id));
+
+    let race_info = document.querySelector("#race_info");
+    let round_info = document.querySelector("#round_info");
+    let circuit_info = document.querySelector("#circuit_info");
+    let circuit_name = document.querySelector("#circuit_name");
+    let date_info = document.querySelector("#date_info");
+    let race_url = document.querySelector("#race_url")
+
+    race_info.textContent = `Results for the ${race.year} ${race.name}`;
+
+    round_info.textContent = `Round: ${race.round} `;
+
+    circuit_info.textContent = `Circuit: `;
+    circuit_name.textContent = `${race.circuit.name} `
+    circuit_name.classList.add("cursor-pointer", "underline");
+
+    date_info.textContent = `Date: ${race.date} `;
+
+    race_url.textContent = "See More";
+
+    race_url.href = race.url;
+
+    race_url.classList.add("cursor-pointer", "underline");
+
+
 }
 
 function filter_data(data, race_id, type) {
@@ -303,11 +441,23 @@ function filter_data(data, race_id, type) {
 
         return data.resultsData.filter(entry => entry.race.id === parseInt(race_id));
     }
+}
+function time_to_seconds(time_string) {
 
+    if (time_string === "") {
 
+        return;
+    } else {
+
+        const [minutes, seconds] = time_string.split(':');
+        const [sec, ms] = seconds.split('.');
+        const total_seconds = parseInt(minutes) * 60 + parseInt(sec);
+        const milliseconds = ms ? parseInt(ms) : 0;
+
+        return total_seconds + milliseconds / 1000;
+    }
 
 }
-
 function change_view(current_view) {
 
     const home_view = document.querySelector("#home");
