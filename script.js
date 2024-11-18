@@ -404,7 +404,10 @@ function populate_results_data(data, header) {
 function populate_race_info(data, race_id) {
 
     let race = data.raceData.find(race => race.id === parseInt(race_id));
-
+    console.log("race: ");
+    console.dir(race);
+    console.log(race_id);
+    //let race_id = race.id;
     let race_info = document.querySelector("#race_info");
     let round_info = document.querySelector("#round_info");
     let circuit_info = document.querySelector("#circuit_info");
@@ -418,7 +421,7 @@ function populate_race_info(data, race_id) {
 
     circuit_info.textContent = `Circuit: `;
     circuit_name.textContent = `${race.circuit.name} `
-    circuit_name.classList.add("cursor-pointer", "underline");
+    circuit_name.classList.add("circuit-modal", "cursor-pointer", "underline");
 
     date_info.textContent = `Date: ${race.date} `;
 
@@ -427,8 +430,7 @@ function populate_race_info(data, race_id) {
     race_url.href = race.url;
 
     race_url.classList.add("cursor-pointer", "underline");
-
-
+    setup_circuit_modal(race);
 }
 
 function filter_data(data, race_id, type) {
@@ -529,7 +531,6 @@ function handleAddToFavorites(item, type) {
         console.log('Already in favorites');
         document.querySelector('#toaster').textContent = "Already in favorites!";
     }
-
     // Show the toaster
     let toaster = document.querySelector('#toaster');
     toaster.classList.remove('hidden');
@@ -539,7 +540,13 @@ function handleAddToFavorites(item, type) {
     console.log('favorites after add:');
     console.dir(favorites);
 }
-
+function setup_circuit_modal(race) {
+    const circuitName = document.querySelector('.circuit-modal');
+    circuitName.addEventListener('click', () => {
+        let circuitModal = document.querySelector('#circuitModal');
+        let closeModalButton = document.querySelector('#closeCircuitModal');
+    });
+}
 function setup_constructor_modal(data, current_season) {
     console.log("setup_constructor_modal");
     const rows = document.querySelectorAll(".constructor-modal");
