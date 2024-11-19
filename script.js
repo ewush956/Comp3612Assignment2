@@ -549,23 +549,33 @@ function handleAddToFavorites(item, type) {
 function setup_favorites_modal() {
 
     const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    const driverFavoritesTable = document.querySelector('#driver_favorites_table');
-    const constructorFavoritesTable = document.querySelector('#constructor_favorites_table');
-    const circuitFavoritesTable = document.querySelector('#circuit_favorites_table');
     const favoritesButton = document.querySelector('#favorites_button');
     const modal = document.querySelector('#favoritesModal');
     const closeModal = document.querySelector('#closeFavoritesModal');
 
-    driverFavoritesTable.innerHTML = '';
-    constructorFavoritesTable.innerHTML = '';
-    circuitFavoritesTable.innerHTML = '';
-
-
+    populateFavoritesTable(favorites.drivers, 'drivers', '#favorites_drivers_table');
+    populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
+    populateFavoritesTable(favorites.circuits, 'circuits', '#favorites_circuits_table');
 
     console.log("favorites:");
     console.dir(favorites);
     favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
 
+}
+function populateFavoritesTable(favorites, type, tableId) {
+    const table = document.querySelector(tableId);
+    console.log('populateFavoritesTable');
+    console.dir(favorites);
+    table.innerHTML = '';
+
+    for (let id in favorites) {
+        let row = document.createElement('tr');
+        let cell = document.createElement('td');
+        cell.classList.add('py-3', 'px-6', 'border-b');
+        cell.textContent = favorites[id];
+        row.appendChild(cell);
+        table.appendChild(row);
+    }
 }
 function setup_circuit_modal(race) {
     console.log('setup_circuit_modal');
