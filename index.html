@@ -233,6 +233,28 @@
                     </table>
                 </div>
             </dialog>
+            <dialog id="circuitModal"
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 max-h-screen overflow-y-auto">
+                <aside class="flex-1 max-w-sm">
+                    <img id="circuitImage" src="" alt="Circuit Image" class="w-full rounded mb-6">
+                </aside>
+                <div class="flex-2">
+                    <h2 class="text-xl font-semibold mb-4 text-center">Circuit Details</h2>
+                    <div id="circuitDetails" class="mb-4">
+                        <!-- Circuit details will be populated here -->
+                        <p class="mb-2"><strong>Name:</strong> <span id="circuitName"></span></p>
+                        <p class="mb-2"><strong>Location:</strong> <span id="circuitLocation"></span></p>
+                        <p class="mb-2"><strong>Country:</strong> <span id="circuitCountry"></span></p>
+                        <p class="mb-2"><strong>URL:</strong> <a id="circuitUrl" href="#"
+                                class="text-blue-500 underline"></a></p>
+                    </div>
+                    <button id="addCircuitToFav"
+                        class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
+                        Favorites</button>
+                    <button id="closeCircuitModal"
+                        class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                </div>
+            </dialog>
             <dialog id="favoritesModal"
                 class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-col gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3/5 max-h-screen overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
