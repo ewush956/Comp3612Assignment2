@@ -517,13 +517,18 @@ function change_view(current_view) {
 function handleAddToFavorites(item, type) {
     console.log('handleAddToFavorites');
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.circuitId];
+    let item_check = favorites[type][item.id] || favorites[type][item.driverId]; // circuit also uses .id
     if (!item_check) {
         //favorites[type][item.id] = item;
         //favorites[type][item.id] = item.name;
-        if (type == "drivers") favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
+        if (type == "drivers")
+            favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
+        else
+            favorites[type][item.id] = item.name;
+        /*
         else if (type == "constructors") favorites[type][item.id] = item.name;
         else if (type == "circuits") favorites[type][item.circuitId] = item.name;
+        */
 
         localStorage.setItem('favorites', JSON.stringify(favorites));
         console.log('Added to favorites');
@@ -540,6 +545,45 @@ function handleAddToFavorites(item, type) {
     showToaster();
     console.log('favorites after add:');
     console.dir(favorites);
+}
+function setup_favorites_modal() {
+
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+    const favoritesButton = document.querySelector('#favorites_button');
+    const modal = document.querySelector('#favoritesModal');
+    const closeModal = document.querySelector('#closeFavoritesModal');
+    const emptyFavoritesButton = document.querySelector('#emptyFavorites');
+
+    populateFavoritesTable(favorites.drivers, 'drivers', '#favorites_drivers_table');
+    populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
+    populateFavoritesTable(favorites.circuits, 'circuits', '#favorites_circuits_table');
+
+    console.log("favorites:");
+    console.dir(favorites);
+    handle_modal(modal, closeModal);
+    //favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
+    emptyFavoritesButton.addEventListener('click', () => {
+        localStorage.removeItem('favorites');
+        populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
+        populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
+        populateFavoritesTable({}, 'circuits', '#favorites_circuits_table');
+    });
+
+}
+function populateFavoritesTable(favorites, type, tableId) {
+    const table = document.querySelector(tableId);
+    console.log('populateFavoritesTable');
+    console.dir(favorites);
+    table.innerHTML = '';
+
+    for (let id in favorites) {
+        let row = document.createElement('tr');
+        let cell = document.createElement('td');
+        cell.classList.add('py-3', 'px-6', 'border-b');
+        cell.textContent = favorites[id];
+        row.appendChild(cell);
+        table.appendChild(row);
+    }
 }
 function setup_circuit_modal(race) {
     console.log('setup_circuit_modal');
@@ -703,25 +747,6 @@ function populate_driver_table(driver_ref, season) {
             });
         })
         .catch(error => console.error('Error fetching driver data:', error));
-}
-function setup_favorites_modal() {
-
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    const driverFavoritesTable = document.querySelector('#driver_favorites_table');
-    const constructorFavoritesTable = document.querySelector('#constructor_favorites_table');
-    const circuitFavoritesTable = document.querySelector('#circuit_favorites_table');
-    const favoritesButton = document.querySelector('#favorites_button');
-    const modal = document.querySelector('#favoritesModal');
-    const closeModal = document.querySelector('#closeFavoritesModal');
-
-    driverFavoritesTable.innerHTML = '';
-    constructorFavoritesTable.innerHTML = '';
-    circuitFavoritesTable.innerHTML = '';
-
-    console.log("favorites:");
-    console.dir(favorites);
-    favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
-
 }
 function handle_modal(modal, closeModalButton) {
     console.log('handle_modal');
