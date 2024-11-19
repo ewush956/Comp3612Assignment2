@@ -552,6 +552,7 @@ function setup_favorites_modal() {
     const favoritesButton = document.querySelector('#favorites_button');
     const modal = document.querySelector('#favoritesModal');
     const closeModal = document.querySelector('#closeFavoritesModal');
+    const emptyFavoritesButton = document.querySelector('#emptyFavorites');
 
     populateFavoritesTable(favorites.drivers, 'drivers', '#favorites_drivers_table');
     populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
@@ -559,7 +560,14 @@ function setup_favorites_modal() {
 
     console.log("favorites:");
     console.dir(favorites);
-    favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
+    handle_modal(modal, closeModal);
+    //favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
+    emptyFavoritesButton.addEventListener('click', () => {
+        localStorage.removeItem('favorites');
+        populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
+        populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
+        populateFavoritesTable({}, 'circuits', '#favorites_circuits_table');
+    });
 
 }
 function populateFavoritesTable(favorites, type, tableId) {
