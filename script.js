@@ -515,6 +515,7 @@ function change_view(current_view) {
 
 }
 function handleAddToFavorites(item, type) {
+    console.log('handleAddToFavorites');
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
     let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.circuitId];
     if (!item_check) {
@@ -541,14 +542,30 @@ function handleAddToFavorites(item, type) {
     console.dir(favorites);
 }
 function setup_circuit_modal(race) {
+    console.log('setup_circuit_modal');
     const circuitName = document.querySelector('.circuit-modal');
     circuitName.addEventListener('click', () => {
+        console.log('race:');
+        console.dir(race);
         let circuitModal = document.querySelector('#circuitModal');
         let closeModalButton = document.querySelector('#closeCircuitModal');
+
+        document.querySelector('#circuitName').textContent = race.circuit.name;
+        document.querySelector('#circuitLocation').textContent = race.circuit.location;
+        document.querySelector('#circuitCountry').textContent = race.circuit.country;
+        document.querySelector('#circuitUrl').href = race.circuit.url;
+        document.querySelector('#circuitUrl').textContent = "Wikipedia";
+        document.querySelector('#circuitImage').src = `images/circuit_placeholder.jpg`;
+        document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
+
+        handle_modal(circuitModal, closeModalButton);
+        let addToFavButton = document.querySelector('#addCircuitToFav');
+        addToFavButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
+
     });
 }
 function setup_constructor_modal(data, current_season) {
-    console.log("setup_constructor_modal");
+    //console.log("setup_constructor_modal");
     const rows = document.querySelectorAll(".constructor-modal");
 
     rows.forEach((row, index) => {
