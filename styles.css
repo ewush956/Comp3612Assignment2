@@ -35,8 +35,8 @@ body.modal-open::before {
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform: translateY(20px);
     position: fixed;
-    bottom: 55%;
-    right: 85%;
+    bottom: 10%;
+    right: 15%;
     transform: translate(50%, 50%);
     background-color: #38a169;
     /* bg-green-500 */

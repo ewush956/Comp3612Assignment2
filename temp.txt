@@ -165,7 +165,7 @@
 
             </section>
             <dialog id="constructorModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-row gap-4 fixed top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/3 max-h-screen overflow-y-auto">
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-col md:flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 md:w-3/4 lg:w-2/3 h-auto max-h-screen overflow-y-auto">
                 <aside class="flex-1 max-w-sm">
                     <h2 class="text-xl font-semibold mb-4 text-center">Constructor Details</h2>
                     <div id="constructorDetails" class="mb-4">
@@ -179,7 +179,6 @@
                         Favorites</button>
                     <button id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded w-full">Close</button>
                 </aside>
-
                 <div class="flex-2 overflow-x-auto">
                     <table class="min-w-full bg-white border">
                         <thead class="sticky top-0 bg-white z-10">
@@ -197,35 +196,38 @@
                 </div>
             </dialog>
             <dialog id="driverModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex gap-4 fixed overflow-y-hidden">
-                <aside class="flex-1 max-w-sm">
-                    <h2 class="text-xl font-semibold mb-4 text-center">Driver Details</h2>
-                    <div id="driverDetails" class="mb-6">
-                        <!-- Driver details will be populated here -->
-                        <p class="mb-2 whitespace-nowrap"><strong>Name:</strong> <span id="driverName"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Age:</strong> <span id="driverAge"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Nationality:</strong> <span
-                                id="driverNationality"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>URL:</strong> <a id="driverUrl" href="#"
-                                class="text-blue-500 underline"></a></p>
+                class="hidden p-6 bg-white shadow-md border rounded-lg mx-auto flex flex-col md:flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-32 w-11/12 md:w-3/4 lg:w-2/3 max-h-3/4 overflow-y-auto">
+                <aside class="flex-1 max-w-sm flex flex-col justify-between h-full">
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 text-center">Driver Details</h2>
+                        <div id="driverDetails" class="mb-4">
+                            <!-- Driver details will be populated here -->
+                            <p class="mb-2"><strong>Name:</strong> <span id="driverName"></span></p>
+                            <p class="mb-2"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
+                            <p class="mb-2"><strong>Age:</strong> <span id="driverAge"></span></p>
+                            <p class="mb-2"><strong>Nationality:</strong> <span id="driverNationality"></span></p>
+                            <p class="mb-2"><strong>URL:</strong> <a id="driverUrl" href="#"
+                                    class="text-blue-500 underline"></a></p>
+                        </div>
                     </div>
-                    <img id="driverImage" src="" alt="Driver Image" class="w-full mt-4 rounded mb-6">
-                    <button id="addDriverToFav"
-                        class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
-                        Favorites</button>
-                    <button id="closeDriverModal"
-                        class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                    <div>
+                        <img id="driverImage" src="" alt="Driver Image" class="w-full mt-6 rounded">
+                        <button id="addDriverToFav"
+                            class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mt-6 mb-4">Add to
+                            Favorites</button>
+                        <button id="closeDriverModal"
+                            class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                    </div>
                 </aside>
 
-                <div class="flex-2 overflow-y-auto">
-                    <table class="bg-white border">
+                <div class="flex-2 overflow-x-auto">
+                    <table class="min-w-full bg-white border">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Round</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Driver</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
-                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Points</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm" id="driver_results_table">
