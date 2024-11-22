@@ -54,3 +54,10 @@ body.modal-open::before {
     opacity: 1;
     transform: translate(50%, 0);
 }
+
+#constructorModal aside,
+#driverModal aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
