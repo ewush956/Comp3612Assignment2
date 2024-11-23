@@ -55,8 +55,7 @@ body.modal-open::before {
     transform: translate(50%, 0);
 }
 
-#constructorModal aside,
-#driverModal aside {
+dialog aside {
     display: flex;
     flex-direction: column;
     justify-content: center;
