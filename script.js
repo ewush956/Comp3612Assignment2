@@ -725,7 +725,7 @@ function populate_driver_table(driver_ref, season) {
                 roundCell.textContent = item.round;
 
                 const nameCell = document.createElement('td');
-                nameCell.classList.add('py-3', 'px-6', 'border-b');
+                nameCell.classList.add('py-3', 'px-6', 'border-b', 'whitespace-nowrap');
                 nameCell.textContent = item.name;
 
                 const posCell = document.createElement('td');

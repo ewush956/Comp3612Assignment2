@@ -165,7 +165,7 @@
 
             </section>
             <dialog id="constructorModal"
-                class="hidden max-h-96 p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex gap-4 fixed overflow-y-hidden">
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-col md:flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-11/12 md:w-3/4 lg:w-2/3 h-auto max-h-screen overflow-y-auto">
                 <aside class="flex-1 max-w-sm">
                     <h2 class="text-xl font-semibold mb-4 text-center">Constructor Details</h2>
                     <div id="constructorDetails" class="mb-4">
@@ -179,7 +179,6 @@
                         Favorites</button>
                     <button id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded w-full">Close</button>
                 </aside>
-
                 <div class="flex-2 overflow-x-auto">
                     <table class="min-w-full bg-white border">
                         <thead class="sticky top-0 bg-white z-10">
@@ -197,35 +196,38 @@
                 </div>
             </dialog>
             <dialog id="driverModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex gap-4 fixed overflow-y-hidden">
-                <aside class="flex-1 max-w-sm">
-                    <h2 class="text-3xl font-bold mb-4 mt-4">Driver Details</h2>
-                    <div id="driverDetails" class="mb-6">
-                        <!-- Driver details will be populated here -->
-                        <p class="mb-2 whitespace-nowrap"><strong>Name:</strong> <span id="driverName"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Age:</strong> <span id="driverAge"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>Nationality:</strong> <span
-                                id="driverNationality"></span></p>
-                        <p class="mb-2 whitespace-nowrap"><strong>URL:</strong> <a id="driverUrl" href="#"
-                                class="text-blue-500 underline"></a></p>
+                class="hidden p-6 bg-white shadow-md border rounded-lg mx-auto flex flex-col md:flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-32 w-11/12 md:w-3/4 lg:w-2/3 max-h-3/4 overflow-y-auto">
+                <aside class="flex-1 max-w-sm flex flex-col justify-between h-full">
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 text-center">Driver Details</h2>
+                        <div id="driverDetails" class="mb-4">
+                            <!-- Driver details will be populated here -->
+                            <p class="mb-2"><strong>Name:</strong> <span id="driverName"></span></p>
+                            <p class="mb-2"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
+                            <p class="mb-2"><strong>Age:</strong> <span id="driverAge"></span></p>
+                            <p class="mb-2"><strong>Nationality:</strong> <span id="driverNationality"></span></p>
+                            <p class="mb-2"><strong>URL:</strong> <a id="driverUrl" href="#"
+                                    class="text-blue-500 underline"></a></p>
+                        </div>
                     </div>
-                    <img id="driverImage" src="" alt="Driver Image" class="w-full rounded mb-4">
-                    <button id="addDriverToFav"
-                        class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
-                        Favorites</button>
-                    <button id="closeDriverModal"
-                        class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                    <div>
+                        <img id="driverImage" src="" alt="Driver Image" class="w-full mt-6 rounded">
+                        <button id="addDriverToFav"
+                            class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mt-6 mb-4">Add to
+                            Favorites</button>
+                        <button id="closeDriverModal"
+                            class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                    </div>
                 </aside>
 
-                <div class="flex-2 overflow-y-auto">
-                    <table class="bg-white border">
+                <div class="flex-2 overflow-x-auto">
+                    <table class="min-w-full bg-white border">
                         <thead class="sticky top-0 bg-white z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Round</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
+                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Driver</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Pos</th>
-                                <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Points</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-700 text-sm" id="driver_results_table">
@@ -235,7 +237,7 @@
                 </div>
             </dialog>
             <dialog id="circuitModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl flex gap-4 fixed overflow-y-hidden mr-8 ml-20">
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-row gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 max-h-screen overflow-y-auto">
                 <aside class="flex-1 max-w-sm">
                     <img id="circuitImage" src="" alt="Circuit Image" class="w-full rounded mb-6">
                 </aside>
@@ -257,67 +259,42 @@
                 </div>
             </dialog>
             <dialog id="favoritesModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3/5 max-h-screen overflow-y-auto">
+                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl mx-auto flex flex-col gap-4 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-3/5 max-h-screen overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-3xl font-bold">Favorites</h2>
-                    <div class="flex gap-2">
-                        <button id="emptyFavorites" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                            Empty Favorites
-                        </button>
-                        <button id="closeFavoritesModal"
-                            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                            Close
-                        </button>
+                    <h2 class="text-xl font-semibold">Favorites</h2>
+                    <div>
+                        <button id="emptyFavorites" class="bg-red-500 text-white px-4 py-2 rounded mr-2 m-4">Empty
+                            Favorites</button>
+                        <button id="closeFavoritesModal" class="bg-gray-500 text-white px-4 py-2 rounded">Close</button>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-4">
-                    <!-- Drivers Table -->
-                    <div class="flex-1 min-w-[300px] border rounded-lg overflow-hidden">
-                        <table class="min-w-full table-auto">
-                            <thead class="bg-gray-200 sticky top-0 z-10">
-                                <tr>
-                                    <th class="px-4 py-2 text-left font-bold">Drivers</th>
-                                </tr>
-                            </thead>
-                            <tbody id="favorites_drivers_table"
-                                class="text-gray-700 text-sm h-40 overflow-y-auto block">
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Drivers</h3>
+                        <table id="driver_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_drivers_table">
                                 <!-- Favorite drivers will populate here -->
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Constructors Table -->
-                    <div class="flex-1 min-w-[300px] border rounded-lg overflow-hidden">
-                        <table class="min-w-full table-auto">
-                            <thead class="bg-gray-200 sticky top-0 z-10">
-                                <tr>
-                                    <th class="px-4 py-2 text-left font-bold">Constructors</th>
-                                </tr>
-                            </thead>
-                            <tbody id="favorites_constructors_table"
-                                class="text-gray-700 text-sm h-40 overflow-y-auto block">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Constructors</h3>
+                        <table id="constructor_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_constructors_table">
                                 <!-- Favorite constructors will populate here -->
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Circuits Table -->
-                    <div class="flex-1 min-w-[300px] border rounded-lg overflow-hidden">
-                        <table class="min-w-full table-auto">
-                            <thead class="bg-gray-200 sticky top-0 z-10">
-                                <tr>
-                                    <th class="px-4 py-2 text-left font-bold">Circuits</th>
-                                </tr>
-                            </thead>
-                            <tbody id="favorites_circuits_table"
-                                class="text-gray-700 text-sm h-40 overflow-y-auto block">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold mb-2">Circuits</h3>
+                        <table id="circuit_favorites_table" class="min-w-full bg-white border">
+                            <tbody class="text-gray-700 text-sm" id="favorites_circuits_table">
                                 <!-- Favorite circuits will populate here -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </dialog>
-
 
             <!-- Add a temporary visual notification (toaster) -->
             <div id="toaster" class="hidden fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-999">
