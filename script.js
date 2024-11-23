@@ -160,7 +160,7 @@ function race_click(season_data) {
 
             let results_data = filter_data(season_data, race_id, "results")
 
-            populate_results_data(results_data, "");
+            populate_results_data(results_data, "", year);
 
             results_sort.addEventListener("click", (event) => {
 
@@ -173,7 +173,7 @@ function race_click(season_data) {
 
                     console.log(header);
 
-                    populate_results_data(results_data, header);
+                    populate_results_data(results_data, header, year);
 
                 }
             });
@@ -304,7 +304,7 @@ function populate_qaul_data(data, header, year) {
     setup_driver_modal(data, year);
 }
 
-function populate_results_data(data, header) {
+function populate_results_data(data, header, year) {
 
     console.log(data);
     const results_table = document.querySelector("#results_table");
@@ -380,7 +380,7 @@ function populate_results_data(data, header) {
         driver.textContent = `${d.driver.forename} ${d.driver.surname}`;
 
         let constructor = document.createElement("td");
-        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
+        constructor.classList.add("constructor-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
         constructor.textContent = `${d.constructor.name}`;
 
         let laps = document.createElement("td");
@@ -400,6 +400,8 @@ function populate_results_data(data, header) {
         results_table.appendChild(row);
 
     }
+    console.log("populate_results_data");
+    setup_constructor_modal(data, year);
 }
 function populate_race_info(data, race_id) {
 
@@ -609,26 +611,37 @@ function setup_circuit_modal(race) {
     });
 }
 function setup_constructor_modal(data, current_season) {
-    //console.log("setup_constructor_modal");
+    console.log("setup_constructor_modal");
+    console.dir(data);
+    console.log(`current_season: ${current_season}`);
     const rows = document.querySelectorAll(".constructor-modal");
 
     rows.forEach((row, index) => {
+        //try and find a more specific value later incase there are more or less drivers.
+        index = index % 20;
         row.addEventListener("click", () => {
+            console.log('constructor-modal clicked');
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
-            let constructor = data[index].constructor;
-            let constructor_ref = data[index].constructor.ref;
 
-            document.querySelector('#constructorName').textContent = constructor.name;
-            document.querySelector('#constructorNationality').textContent = constructor.nationality;
-            document.querySelector('#constructorUrl').href = constructor.url;
-            document.querySelector('#constructorUrl').textContent = "Wikipedia";
+            if (data[index]) {
+                console.log(` index: ${index}`);
+                let constructor = data[index].constructor;
+                let constructor_ref = data[index].constructor.ref;
 
-            populate_constructor_table(constructor_ref, current_season);
-            handle_modal(constructorModal, closeModalButton);
+                document.querySelector('#constructorName').textContent = constructor.name;
+                document.querySelector('#constructorNationality').textContent = constructor.nationality;
+                document.querySelector('#constructorUrl').href = constructor.url;
+                document.querySelector('#constructorUrl').textContent = "Wikipedia";
 
-            let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
+                populate_constructor_table(constructor_ref, current_season);
+                handle_modal(constructorModal, closeModalButton);
+
+                let addToFavButton = document.querySelector('.addToFavorites');
+                addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
+            } else {
+                console.log(`No constructor data found for index: ${index}`);
+            }
         });
     });
 }
