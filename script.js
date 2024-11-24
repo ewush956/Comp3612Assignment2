@@ -282,6 +282,8 @@ function populate_qaul_data(data, header, year) {
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         constructor.textContent = `${d.constructor.name}`;
+        constructor.setAttribute("ref", d.constructor.ref);
+        console.log(`constructor ref: ${d.constructor.ref}`);
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -386,6 +388,7 @@ function populate_results_data(data, header, year) {
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
         constructor.textContent = `${d.constructor.name}`;
+        constructor.setAttribute("ref", d.constructor.ref);
 
         let laps = document.createElement("td");
         laps.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -409,7 +412,7 @@ function populate_results_data(data, header, year) {
     console.log("OLD CALL");
     console.dir(data);
     setup_driver_modal(year);
-    setup_constructor_modal(data, year);
+    setup_constructor_modal(year);
 }
 function populate_race_info(data, race_id) {
 
@@ -618,6 +621,7 @@ function setup_circuit_modal(race) {
 
     });
 }
+/*
 function setup_constructor_modal(data, current_season) {
     console.log("setup_constructor_modal");
     console.dir(data);
@@ -631,25 +635,54 @@ function setup_constructor_modal(data, current_season) {
             console.log('constructor-modal clicked');
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
+            let constructor_ref = row.getAttribute("ref");
 
-            if (data[index]) {
-                console.log(` index: ${index}`);
-                let constructor = data[index].constructor;
-                let constructor_ref = data[index].constructor.ref;
+            console.log(` index: ${index}`);
+            let constructor = data[index].constructor;
 
-                document.querySelector('#constructorName').textContent = constructor.name;
-                document.querySelector('#constructorNationality').textContent = constructor.nationality;
-                document.querySelector('#constructorUrl').href = constructor.url;
-                document.querySelector('#constructorUrl').textContent = "Wikipedia";
+            document.querySelector('#constructorName').textContent = constructor.name;
+            document.querySelector('#constructorNationality').textContent = constructor.nationality;
+            document.querySelector('#constructorUrl').href = constructor.url;
+            document.querySelector('#constructorUrl').textContent = "Wikipedia";
 
-                populate_constructor_table(constructor_ref, current_season);
-                handle_modal(constructorModal, closeModalButton);
+            populate_constructor_table(constructor_ref, current_season);
+            handle_modal(constructorModal, closeModalButton);
 
-                let addToFavButton = document.querySelector('.addToFavorites');
-                addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
-            } else {
-                console.log(`No constructor data found for index: ${index}`);
-            }
+            let addToFavButton = document.querySelector('.addToFavorites');
+            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
+
+        });
+    });
+}
+    */
+function setup_constructor_modal(year) {
+    console.log("setup_constructor_modal");
+    const rows = document.querySelectorAll(".constructor-modal");
+    console.log("rows:");
+    console.dir(rows);
+    rows.forEach(row => {
+        row.addEventListener("click", () => {
+            let constructorModal = document.querySelector('#constructorModal');
+            let closeModalButton = document.querySelector('#closeModal');
+            let constructor_ref = row.getAttribute("ref");
+            console.log(`constructor_ref: ${constructor_ref}`);
+            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
+                .then(response => response.json())
+                .then(constructor => {
+                    document.querySelector('#constructorName').textContent = constructor.name;
+                    document.querySelector('#constructorNationality').textContent = constructor.nationality;
+                    document.querySelector('#constructorUrl').href = constructor.url;
+                    document.querySelector('#constructorUrl').textContent = "Wikipedia";
+                    document.querySelector('#constructorUrl').href = constructor.url;
+
+                    populate_constructor_table(constructor_ref, year);
+                    handle_modal(constructorModal, closeModalButton);
+
+                    let addToFavButton = document.querySelector('.addToFavorites');
+                    addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
+
+                })
+                .catch(error => console.error('Error fetching constructor data:', error));
         });
     });
 }
@@ -720,7 +753,8 @@ function setup_driver_modal(current_season) {
                     handle_modal(driverModal, closeModalButton);
                     let addToFavButton = document.querySelector('#addDriverToFav');
                     addToFavButton.addEventListener('click', () => handleAddToFavorites(driver, "drivers"));
-                });
+                })
+                .catch(error => console.error('Error fetching driver data:', error));
         });
     });
 }
