@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetchSeasonData(current_season);
 
+
     });
 
     /*Event Listeners for Hardcoded Elements*/
@@ -52,6 +53,9 @@ function fetchSeasonData(season) {
 
         populate_race_data(season_data);
         race_click(season_data);
+        console.log("NEW CALL");
+        console.dir(season_data);
+        //setup_driver_modal(season_data, season);
 
         return;
     }
@@ -178,10 +182,9 @@ function race_click(season_data) {
                 }
             });
         }
+        //setup_driver_modal(season_data, year);
     });
 }
-
-/*Non-Callback Hell Functions*/
 function populate_race_data(season_data, header) {
 
     const race_list = document.querySelector("#race_table");
@@ -274,6 +277,9 @@ function populate_qaul_data(data, header, year) {
         let name = document.createElement("td");
         name.classList.add("driver-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        //name.id = d.driver.ref;
+        //row.setAttribute("data-race-id", race.id);
+        name.setAttribute("ref", d.driver.ref);
 
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -300,8 +306,8 @@ function populate_qaul_data(data, header, year) {
 
         qual_table.appendChild(row);
     }
-    setup_constructor_modal(data, year);
-    setup_driver_modal(data, year);
+    //setup_constructor_modal(data, year);
+    //setup_driver_modal(data, year);
 }
 
 function populate_results_data(data, header, year) {
@@ -317,9 +323,9 @@ function populate_results_data(data, header, year) {
 
     results_table.innerHTML = "";
 
-    first_box.classList.add("hover:bg-gray-200", "cursor-pointer");
-    second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
-    third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
+    first_box.classList.add("driver-modal", "cursor-pointer");
+    second_box.classList.add("driver-modal", "cursor-pointer");
+    third_box.classList.add("driver-modal", "cursor-pointer");
 
     const sorted_data = [...data].sort((a, b) => {
         if (header === "Pos") {
@@ -354,19 +360,20 @@ function populate_results_data(data, header, year) {
         if (d.position === 1) {
 
             first.textContent = `${d.driver.forename} ${d.driver.surname}`;
+            first_box.setAttribute("ref", d.driver.ref);
 
         }
 
         if (d.position === 2) {
 
             second.textContent = `${d.driver.forename} ${d.driver.surname}`;
-
+            second_box.setAttribute("ref", d.driver.ref);
         }
 
         if (d.position === 3) {
 
             third.textContent = `${d.driver.forename} ${d.driver.surname}`;
-
+            third_box.setAttribute("ref", d.driver.ref);
         }
 
         let row = document.createElement("tr");
@@ -376,8 +383,9 @@ function populate_results_data(data, header, year) {
         pos.textContent = `${d.position}`;
 
         let driver = document.createElement("td");
-        driver.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        driver.classList.add("driver-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover", "cursor-pointer");
         driver.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        driver.setAttribute("ref", d.driver.ref);
 
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
@@ -401,7 +409,10 @@ function populate_results_data(data, header, year) {
 
     }
     console.log("populate_results_data");
-    setup_constructor_modal(data, year);
+    //setup_constructor_modal(data, year);
+    console.log("OLD CALL");
+    console.dir(data);
+    setup_driver_modal(data, year);
 }
 function populate_race_info(data, race_id) {
 
@@ -683,14 +694,21 @@ function populate_constructor_table(constructor_ref, season) {
         .catch(error => console.error('Error fetching constructor data:', error));
 }
 function setup_driver_modal(data, current_season) {
+    console.log("setup_driver_modal");
     const rows = document.querySelectorAll(".driver-modal");
-
+    console.log("rows:");
+    console.dir(rows);
     rows.forEach((row, index) => {
+        //index = index % 20;
+
         row.addEventListener("click", () => {
 
             let driverModal = document.querySelector('#driverModal');
             let closeModalButton = document.querySelector('#closeDriverModal');
-            let driver_ref = data[index].driver.ref;
+            //let driver_ref = data[index].driver.ref;
+            //let driver_ref = row.id;
+            let driver_ref = row.getAttribute("ref");
+            console.log(`driver_ref (in setup): ${driver_ref}`);
             //Need to fetch driver data because the constructor data does not contain drivers age and url
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
                 .then(response => response.json())
@@ -722,12 +740,16 @@ function populate_driver_table(driver_ref, season) {
 
             const seasonKey = `season_${season}`;
             const storedData = JSON.parse(localStorage.getItem(seasonKey));
+            console.log('storedData:');
+            console.dir(storedData);
             const resultsData = storedData ? storedData.resultsData : [];
 
             let driverResultsTable = document.querySelector('#driver_results_table');
             driverResultsTable.innerHTML = ''; // Clear existing results
             let driverImage = document.querySelector('#driverImage');
             driverImage.src = "images/driver_placeholder.png";
+            console.log('matchingDrivers:');
+            console.dir(matchingDrivers);
             matchingDrivers.forEach(item => {
 
                 const row = document.createElement('tr');
@@ -740,6 +762,8 @@ function populate_driver_table(driver_ref, season) {
                 const nameCell = document.createElement('td');
                 nameCell.classList.add('py-3', 'px-6', 'border-b', 'whitespace-nowrap');
                 nameCell.textContent = item.name;
+                //console.log('item:');
+                //console.dir(item);
 
                 const posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
