@@ -55,7 +55,6 @@ function fetchSeasonData(season) {
         race_click(season_data);
         console.log("NEW CALL");
         console.dir(season_data);
-        //setup_driver_modal(season_data, season);
 
         return;
     }
@@ -182,7 +181,6 @@ function race_click(season_data) {
                 }
             });
         }
-        //setup_driver_modal(season_data, year);
     });
 }
 function populate_race_data(season_data, header) {
@@ -306,8 +304,6 @@ function populate_qaul_data(data, header, year) {
 
         qual_table.appendChild(row);
     }
-    //setup_constructor_modal(data, year);
-    //setup_driver_modal(data, year);
 }
 
 function populate_results_data(data, header, year) {
@@ -412,7 +408,8 @@ function populate_results_data(data, header, year) {
     //setup_constructor_modal(data, year);
     console.log("OLD CALL");
     console.dir(data);
-    setup_driver_modal(data, year);
+    setup_driver_modal(year);
+    setup_constructor_modal(data, year);
 }
 function populate_race_info(data, race_id) {
 
@@ -629,7 +626,7 @@ function setup_constructor_modal(data, current_season) {
 
     rows.forEach((row, index) => {
         //try and find a more specific value later incase there are more or less drivers.
-        index = index % 20;
+        //index = index % 20;
         row.addEventListener("click", () => {
             console.log('constructor-modal clicked');
             let constructorModal = document.querySelector('#constructorModal');
@@ -693,23 +690,18 @@ function populate_constructor_table(constructor_ref, season) {
         })
         .catch(error => console.error('Error fetching constructor data:', error));
 }
-function setup_driver_modal(data, current_season) {
+function setup_driver_modal(current_season) {
     console.log("setup_driver_modal");
     const rows = document.querySelectorAll(".driver-modal");
     console.log("rows:");
     console.dir(rows);
-    rows.forEach((row, index) => {
-        //index = index % 20;
-
+    rows.forEach(row => {
         row.addEventListener("click", () => {
 
             let driverModal = document.querySelector('#driverModal');
             let closeModalButton = document.querySelector('#closeDriverModal');
-            //let driver_ref = data[index].driver.ref;
-            //let driver_ref = row.id;
             let driver_ref = row.getAttribute("ref");
-            console.log(`driver_ref (in setup): ${driver_ref}`);
-            //Need to fetch driver data because the constructor data does not contain drivers age and url
+
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
                 .then(response => response.json())
                 .then(driver => {
