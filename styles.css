@@ -25,6 +25,7 @@
     transform: translate(50%, 0);
 }
 
+
 dialog#driverModal::backdrop {
     background-color: rgba(0, 0, 0, 0.5); /* Optional: darken background */
 }
@@ -48,4 +49,15 @@ dialog#driverModal {
 
 dialog#constructorModal {
 
+
+dialog aside {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.heart-icon {
+    transition: color 0.3s ease;
+    width: 30px;
+    height: 30px;
 }
