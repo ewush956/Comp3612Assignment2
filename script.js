@@ -55,7 +55,7 @@ function fetchSeasonData(season) {
         race_click(season_data);
         return;
     }
-
+    change_view("loading");
     const raceDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${season}`;
     const qualificationDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?season=${season}`;
     const resultsDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?season=${season}`;
@@ -94,7 +94,9 @@ function fetchSeasonData(season) {
 
             localStorage.setItem(seasonKey, JSON.stringify(season_data));
 
-            console.log(season_data);
+            //console.log(season_data);
+            //unhide
+            change_view("home");
             populate_race_data(season_data, "");
             race_click(season_data);
         })
@@ -362,6 +364,7 @@ function populate_results_data(data, header, year) {
 
             first.textContent = `${d.driver.forename} ${d.driver.surname}`;
             first_box.setAttribute("ref", d.driver.ref);
+            addHeartIcon(first, d.driver.id, "drivers");
 
         }
 
@@ -369,12 +372,14 @@ function populate_results_data(data, header, year) {
 
             second.textContent = `${d.driver.forename} ${d.driver.surname}`;
             second_box.setAttribute("ref", d.driver.ref);
+            addHeartIcon(second, d.driver.id, "drivers");
         }
 
         if (d.position === 3) {
 
             third.textContent = `${d.driver.forename} ${d.driver.surname}`;
             third_box.setAttribute("ref", d.driver.ref);
+            addHeartIcon(third, d.driver.id, "drivers");
         }
 
         let row = document.createElement("tr");
@@ -489,6 +494,7 @@ function change_view(current_view) {
     const first_box = document.querySelector("#first_box");
     const second_box = document.querySelector("#second_box");
     const third_box = document.querySelector("#third_box");
+    const loading_view = document.querySelector("#loading");
     let toasters = document.querySelector(".toaster");
     let modals = document.querySelector("dialog");
 
@@ -510,10 +516,21 @@ function change_view(current_view) {
         race_view.classList.remove("hidden");
         buttons.classList.remove("hidden", "lg:hidden");
         toasters.classList.add("hidden");
+        loading_view.classList.add("hidden");
 
         current_view = "race";
 
         return current_view;
+    }
+    else if (current_view === "loading") {
+
+        home_view.classList.add("hidden");
+        race_view.classList.add("hidden");
+        title.classList.add("hidden");
+        loading_view.classList.remove("hidden");
+
+        //doesn't change view until data is loaded
+        return "loading";
 
     } else {
 
@@ -521,6 +538,7 @@ function change_view(current_view) {
         title.classList.remove("hidden");
         race_view.classList.add("hidden");
         buttons.classList.add("hidden", "lg:hidden");
+        loading_view.classList.add("hidden");
 
         current_view = "home";
 
@@ -558,7 +576,7 @@ function handleAddToFavorites(item, type) {
         showToaster(type, "dontAdd");
     }
 
-    
+
 
 }
 function setup_favorites_modal() {
@@ -821,10 +839,10 @@ function showToaster(type, added) {
 
     const toaster = document.querySelectorAll('.toaster');
 
-    if(type === "constructors"){
-        if(added === "add"){
+    if (type === "constructors") {
+        if (added === "add") {
             toaster[0].textContent = "Added to favorites!";
-        }else{
+        } else {
             toaster[0].textContent = "Already in favorites!";
         }
         toaster[0].classList.remove('hidden')
@@ -833,10 +851,10 @@ function showToaster(type, added) {
             toaster[0].classList.remove('show');
         }, 2000); // Adjust the timeout duration as needed
 
-    }else if(type === "drivers"){
-        if(added === "add"){
+    } else if (type === "drivers") {
+        if (added === "add") {
             toaster[1].textContent = "Added to favorites!";
-        }else{
+        } else {
             toaster[1].textContent = "Already in favorites!";
         }
 
@@ -847,10 +865,10 @@ function showToaster(type, added) {
         }, 2000); // Adjust the timeout duration as needed
 
 
-    }else{
-        if(added === "add"){
+    } else {
+        if (added === "add") {
             toaster[2].textContent = "Added to favorites!";
-        }else{
+        } else {
             toaster[2].textContent = "Already in favorites!";
         }
 
