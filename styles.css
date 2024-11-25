@@ -1,6 +1,6 @@
 
 
-#toaster {
+.toaster {
     opacity: 0;
     transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform: translateY(20px);
@@ -20,7 +20,7 @@
     /* Increase font size */
 }
 
-#toaster.show {
+.toaster.show {
     opacity: 1;
     transform: translate(50%, 0);
 }
@@ -48,7 +48,7 @@ dialog#driverModal {
 }
 
 dialog#constructorModal {
-
+}
 
 dialog aside {
     display: flex;

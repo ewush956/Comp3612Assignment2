@@ -489,7 +489,7 @@ function change_view(current_view) {
     const first_box = document.querySelector("#first_box");
     const second_box = document.querySelector("#second_box");
     const third_box = document.querySelector("#third_box");
-    let toasters = document.querySelector("#toaster");
+    let toasters = document.querySelector(".toaster");
     let modals = document.querySelector("dialog");
 
     first.textContent = "";
@@ -551,20 +551,15 @@ function handleAddToFavorites(item, type) {
 
         localStorage.setItem('favorites', JSON.stringify(favorites));
         console.log('Added to favorites');
-        document.querySelector('#toaster').textContent = "Added to favorites!";
+        showToaster(type, "add");
     }
     else {
         console.log('Already in favorites');
-        document.querySelector('#toaster').textContent = "Already in favorites!";
+        showToaster(type, "dontAdd");
     }
-    // Show the toaster
-    let toaster = document.querySelector('#toaster');
-    toaster.classList.remove('hidden');
-    //console.log('showing toaster');
-    // Hide the toaster after 3 seconds
-    showToaster();
-    //console.log('favorites after add:');
-    //console.dir(favorites);
+
+    
+
 }
 function setup_favorites_modal() {
 
@@ -796,28 +791,77 @@ function populate_driver_table(driver_ref, season) {
         .catch(error => console.error('Error fetching driver data:', error));
 }
 function handle_modal(modal, closeModalButton) {
+
+    let currentModal = modal.id;
+
     console.log('handle_modal');
     modal.showModal();
     document.body.classList.add('modal-open');
     modal.classList.remove('hidden');
 
+    let wrapper = document.querySelector(`.${currentModal}`);
+
+    wrapper.classList.remove('hidden');
+
     closeModalButton.addEventListener('click', () => {
         modal.close();
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
+        wrapper.classList.add('hidden');
     });
 
     modal.addEventListener('close', () => {
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
+        wrapper.classList.add('hidden');
     });
 }
-function showToaster() {
-    const toaster = document.querySelector('#toaster');
-    toaster.classList.add('show');
-    setTimeout(() => {
-        toaster.classList.remove('show');
-    }, 2000); // Adjust the timeout duration as needed
+function showToaster(type, added) {
+
+
+    const toaster = document.querySelectorAll('.toaster');
+
+    if(type === "constructors"){
+        if(added === "add"){
+            toaster[0].textContent = "Added to favorites!";
+        }else{
+            toaster[0].textContent = "Already in favorites!";
+        }
+        toaster[0].classList.remove('hidden')
+        toaster[0].classList.add('show');
+        setTimeout(() => {
+            toaster[0].classList.remove('show');
+        }, 2000); // Adjust the timeout duration as needed
+
+    }else if(type === "drivers"){
+        if(added === "add"){
+            toaster[1].textContent = "Added to favorites!";
+        }else{
+            toaster[1].textContent = "Already in favorites!";
+        }
+
+        toaster[1].classList.remove('hidden')
+        toaster[1].classList.add('show');
+        setTimeout(() => {
+            toaster[1].classList.remove('show');
+        }, 2000); // Adjust the timeout duration as needed
+
+
+    }else{
+        if(added === "add"){
+            toaster[2].textContent = "Added to favorites!";
+        }else{
+            toaster[2].textContent = "Already in favorites!";
+        }
+
+        toaster[2].classList.remove('hidden')
+        toaster[2].classList.add('show');
+        setTimeout(() => {
+            toaster[2].classList.remove('show');
+        }, 2000); // Adjust the timeout duration as needed
+
+    }
+
 }
 //Make a helper function that calculates the age of a driver
 function calculate_age(dob) {
