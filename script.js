@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
         currentView = changeView(currentView);
         fetchSeasonData(currentSeason);
     });
-    let home_button = document.querySelector("#home_button");
+    let homeButton = document.querySelector("#homeButton");
 
-    home_button.addEventListener("click", () => {
+    homeButton.addEventListener("click", () => {
 
         currentView = changeView(currentView);
         season.value = "select";
@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
         season.value = "select";
 
     });
-    let favorites_button = document.querySelector("#favorites_button");
-    favorites_button.addEventListener("click", () => setup_favorites_modal());
+    let favoritesButton = document.querySelector("#favoritesButton");
+    favoritesButton.addEventListener("click", () => setupFavoritesModal());
 });
 /**
  * Fetches and processes season data for a given year.
@@ -45,15 +45,15 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 function fetchSeasonData(season) {
 
-    let season_data
+    let seasonData
     const seasonKey = `season_${season}`;
     const storedData = localStorage.getItem(seasonKey);
 
     if (storedData) {
-        season_data = JSON.parse(storedData);
+        seasonData = JSON.parse(storedData);
 
-        populate_race_data(season_data);
-        race_click(season_data);
+        populateRaceData(seasonData);
+        raceClick(seasonData);
         return;
     }
     changeView("loading");
@@ -61,7 +61,7 @@ function fetchSeasonData(season) {
     const qualificationDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?season=${season}`;
     const resultsDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?season=${season}`;
 
-    season_data = {};
+    seasonData = {};
     fetch(raceDataUrl)
         .then(response => {
             if (!response.ok) {
@@ -70,7 +70,7 @@ function fetchSeasonData(season) {
             return response.json();
         })
         .then(raceData => {
-            season_data.raceData = raceData;
+            seasonData.raceData = raceData;
             return fetch(qualificationDataUrl);
         })
         .then(response => {
@@ -80,7 +80,7 @@ function fetchSeasonData(season) {
             return response.json();
         })
         .then(qualificationData => {
-            season_data.qualificationData = qualificationData;
+            seasonData.qualificationData = qualificationData;
             return fetch(resultsDataUrl);
         })
         .then(response => {
@@ -90,11 +90,11 @@ function fetchSeasonData(season) {
             return response.json();
         })
         .then(resultsData => {
-            season_data.resultsData = resultsData;
-            localStorage.setItem(seasonKey, JSON.stringify(season_data));
+            seasonData.resultsData = resultsData;
+            localStorage.setItem(seasonKey, JSON.stringify(seasonData));
             changeView("home");
-            populate_race_data(season_data, "");
-            race_click(season_data);
+            populateRaceData(seasonData, "");
+            raceClick(seasonData);
         })
         .catch(error => {
             console.error('An error occurred:', error.message);
@@ -106,17 +106,17 @@ function fetchSeasonData(season) {
  * This function adds event listeners to handle sorting of race, qualification, and results data tables.
  * It also sets up event listeners for clicking on race rows to populate race information, qualification data, and results data.
  *
- * @param {Object} season_data - The data object containing race information for the season.
+ * @param {Object} seasonData - The data object containing race information for the season.
  */
-function race_click(season_data) {
+function raceClick(seasonData) {
 
-    let race_sort = document.querySelector("#race_head");
-    let qual_sort = document.querySelector("#qual_head");
-    let results_sort = document.querySelector("#results_head");
-    let race_click = document.querySelector("#race_table");
-    let year = season_data.raceData[0].year;
+    let raceSort = document.querySelector("#raceHead");
+    let qualSort = document.querySelector("#qualHead");
+    let resultsSort = document.querySelector("#resultsHead");
+    let raceClick = document.querySelector("#raceTable");
+    let year = seasonData.raceData[0].year;
 
-    race_sort.addEventListener("click", (event) => {
+    raceSort.addEventListener("click", (event) => {
 
         let element = event.target;
 
@@ -124,34 +124,34 @@ function race_click(season_data) {
 
             let cell = element;
             let header = cell.textContent;
-            populate_race_data(season_data, header);
+            populateRaceData(seasonData, header);
         }
     });
-    race_click.addEventListener("click", (event) => {
+    raceClick.addEventListener("click", (event) => {
 
         let element = event.target;
         if (element.tagName === "TD") {
 
             let row = element.closest("tr");
-            let race_id = row.getAttribute("data-race-id");
+            let raceId = row.getAttribute("data-race-id");
 
-            populate_race_info(season_data, race_id);
-            let qual_data = filter_data(season_data, race_id, "qual");
+            populateRaceInfo(seasonData, raceId);
+            let qualData = filterData(seasonData, raceId, "qual");
 
-            populate_qaul_data(qual_data, "", year);
-            qual_sort.addEventListener("click", (event) => {
+            populateQaulData(qualData, "", year);
+            qualSort.addEventListener("click", (event) => {
 
                 let element = event.target;
                 if (element.tagName === "TH") {
 
                     let cell = element;
                     let header = cell.textContent;
-                    populate_qaul_data(qual_data, header, year);
+                    populateQaulData(qualData, header, year);
                 }
             });
-            let results_data = filter_data(season_data, race_id, "results")
-            populate_results_data(results_data, "", year);
-            results_sort.addEventListener("click", (event) => {
+            let resultsData = filterData(seasonData, raceId, "results")
+            populateResultsData(resultsData, "", year);
+        resultsSort.addEventListener("click", (event) => {
 
                 let element = event.target;
 
@@ -159,7 +159,7 @@ function race_click(season_data) {
 
                     let cell = element;
                     let header = cell.textContent;
-                    populate_results_data(results_data, header, year);
+                    populateResultsData(resultsData, header, year);
                 }
             });
         }
@@ -171,19 +171,19 @@ function race_click(season_data) {
  * This function takes season race data, sorts it based on the specified header, and populates the race table with the sorted data.
  * It also updates the race header with the year of the races.
  *
- * @param {Object} season_data - The data object containing race information for the season.
+ * @param {Object} seasonData - The data object containing race information for the season.
  * @param {string} header - The header by which to sort the data (e.g., "Name", "Rnd").
  */
-function populate_race_data(season_data, header) {
+function populateRaceData(seasonData, header) {
 
-    const race_list = document.querySelector("#race_table");
-    race_list.innerHTML = "";
+    const raceList = document.querySelector("#raceTable");
+    raceList.innerHTML = "";
 
-    let race_header = document.querySelector("#race_header");
+    let raceHeader = document.querySelector("#raceHeader");
 
-    race_header.textContent = `${season_data.raceData[0].year} Races`;
+    raceHeader.textContent = `${seasonData.raceData[0].year} Races`;
 
-    const sorted_data = [...season_data.raceData].sort((a, b) => {
+    const sortedData = [...seasonData.raceData].sort((a, b) => {
         if (header === "Name") {
 
             return a.name > b.name ? 1 : (a.name < b.name ? -1 : 0);
@@ -193,7 +193,7 @@ function populate_race_data(season_data, header) {
         }
         return 0;
     });
-    for (let race of sorted_data) {
+    for (let race of sortedData) {
 
         let row = document.createElement("tr");
         row.setAttribute("data-race-id", race.id);
@@ -209,7 +209,7 @@ function populate_race_data(season_data, header) {
         row.appendChild(round);
         row.appendChild(name);
 
-        race_list.appendChild(row);
+        raceList.appendChild(row);
     }
 }
 /**
@@ -222,41 +222,41 @@ function populate_race_data(season_data, header) {
  * @param {string} header - The header by which to sort the data (e.g., "Pos", "Driver", "Const", "Q1", "Q2", "Q3").
  * @param {number} year - The year of the race season.
  */
-function populate_qaul_data(data, header, year) {
+function populateQaulData(data, header, year) {
 
-    const qual_table = document.querySelector("#qual_table");
+    const qualTable = document.querySelector("#qualTable");
 
-    qual_table.innerHTML = "";
+    qualTable.innerHTML = "";
 
-    const sorted_data = [...data].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
 
         if (header === "Pos") {
 
             return a.position - b.position;
         } else if (header === "Driver") {
 
-            const full_name_a = `${a.driver.forename} ${a.driver.surname}`;
-            const full_name_b = `${b.driver.forename} ${b.driver.surname}`;
-            return full_name_a > full_name_b ? 1 : full_name_a < full_name_b ? -1 : 0;
+            const fullNameA = `${a.driver.forename} ${a.driver.surname}`;
+            const fullNameB = `${b.driver.forename} ${b.driver.surname}`;
+            return fullNameA > fullNameB ? 1 : fullNameA < fullNameB ? -1 : 0;
         } else if (header === "Const") {
 
-            const constructor_name_a = a.constructor.name;
-            const constructor_name_b = b.constructor.name;
+            const constructorNameA = a.constructor.name;
+            const constructorNameB = b.constructor.name;
 
-            return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
+            return constructorNameA > constructorNameB ? 1 : constructorNameA < constructorNameB ? -1 : 0;
         } else if (header === "Q1") {
 
-            return time_to_seconds(a.q1) - time_to_seconds(b.q1);
+            return timeToSeconds(a.q1) - timeToSeconds(b.q1);
         } else if (header === "Q2") {
 
-            return time_to_seconds(a.q2) - time_to_seconds(b.q2);
+            return timeToSeconds(a.q2) - timeToSeconds(b.q2);
         } else if (header === "Q3") {
 
-            return time_to_seconds(a.q3) - time_to_seconds(b.q3);
+            return timeToSeconds(a.q3) - timeToSeconds(b.q3);
         }
         return 0;
     });
-    for (let d of sorted_data) {
+    for (let d of sortedData) {
 
         let row = document.createElement("tr");
 
@@ -336,10 +336,10 @@ function populate_qaul_data(data, header, year) {
         row.appendChild(q2);
         row.appendChild(q3);
 
-        qual_table.appendChild(row);
+        qualTable.appendChild(row);
     }
-    setup_driver_modal(year);
-    setup_constructor_modal(year);
+    setupDriverModal(year);
+    setupConstructorModal(year);
 }
 /**
  * Populates the results table with race data and updates the podium positions.
@@ -351,39 +351,39 @@ function populate_qaul_data(data, header, year) {
  * @param {string} header - The header by which to sort the data (e.g., "Pos", "Driver", "Const", "Laps", "Pts").
  * @param {number} year - The year of the race season.
  */
-function populate_results_data(data, header, year) {
+function populateResultsData(data, header, year) {
 
     console.log(data);
-    const results_table = document.querySelector("#results_table");
+    const resultsTable = document.querySelector("#resultsTable");
     const first = document.querySelector("#first");
     const second = document.querySelector("#second");
     const third = document.querySelector("#third");
-    const first_box = document.querySelector("#first_box");
-    const second_box = document.querySelector("#second_box");
-    const third_box = document.querySelector("#third_box");
+    const firstBox = document.querySelector("#firstBox");
+    const secondBox = document.querySelector("#secondBox");
+    const thirdBox = document.querySelector("#thirdBox");
 
-    results_table.innerHTML = "";
+    resultsTable.innerHTML = "";
 
-    first_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
-    second_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
-    third_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
+    firstBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
+    secondBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
+    thirdBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
 
-    const sorted_data = [...data].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
         if (header === "Pos") {
 
             return a.position - b.position;
         } else if (header === "Driver") {
 
-            const full_name_a = `${a.driver.forename} ${a.driver.surname}`;
-            const full_name_b = `${b.driver.forename} ${b.driver.surname}`;
+            const fullNameA = `${a.driver.forename} ${a.driver.surname}`;
+            const fullNameB = `${b.driver.forename} ${b.driver.surname}`;
 
-            return full_name_a > full_name_b ? 1 : full_name_a < full_name_b ? -1 : 0;
+            return fullNameA > fullNameB ? 1 : fullNameA < fullNameB ? -1 : 0;
         } else if (header === "Const") {
 
-            const constructor_name_a = a.constructor.name;
-            const constructor_name_b = b.constructor.name;
+            const constructorNameA = a.constructor.name;
+            const constructorNameB = b.constructor.name;
 
-            return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
+            return constructorNameA > constructorNameB ? 1 : constructorNameA < constructorNameB ? -1 : 0;
         } else if (header === "Laps") {
 
             return b.laps - a.laps;
@@ -393,21 +393,21 @@ function populate_results_data(data, header, year) {
         }
         return 0;
     });
-    for (let d of sorted_data) {
+    for (let d of sortedData) {
 
         if (d.position === 1) {
             first.textContent = `${d.driver.forename} ${d.driver.surname}`;
-            first_box.setAttribute("ref", d.driver.ref);
+            firstBox.setAttribute("ref", d.driver.ref);
             addHeartIcon(first, d.driver.id, "drivers");
         }
         if (d.position === 2) {
             second.textContent = `${d.driver.forename} ${d.driver.surname}`;
-            second_box.setAttribute("ref", d.driver.ref);
+            secondBox.setAttribute("ref", d.driver.ref);
             addHeartIcon(second, d.driver.id, "drivers");
         }
         if (d.position === 3) {
             third.textContent = `${d.driver.forename} ${d.driver.surname}`;
-            third_box.setAttribute("ref", d.driver.ref);
+            thirdBox.setAttribute("ref", d.driver.ref);
             addHeartIcon(third, d.driver.id, "drivers");
         }
         let row = document.createElement("tr");
@@ -442,10 +442,10 @@ function populate_results_data(data, header, year) {
         row.appendChild(laps);
         row.appendChild(points);
 
-        results_table.appendChild(row);
+        resultsTable.appendChild(row);
     }
-    setup_driver_modal(year);
-    setup_constructor_modal(year);
+    setupDriverModal(year);
+    setupConstructorModal(year);
 }
 /**
  * Populates the race information section with details of the specified race.
@@ -455,33 +455,33 @@ function populate_results_data(data, header, year) {
  * It also sets up the circuit modal for the race.
  *
  * @param {Object} data - The data object containing race information.
- * @param {number|string} race_id - The ID of the race to display information for.
+ * @param {number|string} raceId - The ID of the race to display information for.
  */
-function populate_race_info(data, race_id) {
+function populateRaceInfo(data, raceId) {
 
-    let race = data.raceData.find(race => race.id === parseInt(race_id));
+    let race = data.raceData.find(race => race.id === parseInt(raceId));
 
-    let race_info = document.querySelector("#race_info");
-    let round_info = document.querySelector("#round_info");
-    let circuit_info = document.querySelector("#circuit_info");
-    let circuit_name = document.querySelector("#circuit_name");
-    let date_info = document.querySelector("#date_info");
-    let race_url = document.querySelector("#race_url")
+    let raceInfo = document.querySelector("#raceInfo");
+    let roundInfo = document.querySelector("#roundInfo");
+    let circuitInfo = document.querySelector("#circuitInfo");
+    let circuitName = document.querySelector("#circuitName");
+    let dateInfo = document.querySelector("#dateInfo");
+    let raceUrl = document.querySelector("#raceUrl")
 
-    race_info.textContent = `Results for the ${race.year} ${race.name}`;
-    round_info.textContent = `Round: ${race.round} `;
+    raceInfo.textContent = `Results for the ${race.year} ${race.name}`;
+    roundInfo.textContent = `Round: ${race.round} `;
 
-    circuit_info.textContent = `Circuit: `;
-    circuit_name.textContent = `${race.circuit.name} `
-    circuit_name.classList.add("circuit-modal", "cursor-pointer", "underline");
+    circuitInfo.textContent = `Circuit: `;
+    circuitName.textContent = `${race.circuit.name} `
+    circuitName.classList.add("circuit-modal", "cursor-pointer", "underline");
 
-    date_info.textContent = `Date: ${race.date} `;
+    dateInfo.textContent = `Date: ${race.date} `;
 
-    race_url.textContent = "See More";
-    race_url.href = race.url;
-    race_url.classList.add("cursor-pointer", "underline");
+    raceUrl.textContent = "See More";
+    raceUrl.href = race.url;
+    raceUrl.classList.add("cursor-pointer", "underline");
 
-    setup_circuit_modal(race);
+    setupCircuitModal(race);
 }
 /**
  * Filters data based on race ID and type.
@@ -490,19 +490,19 @@ function populate_race_info(data, race_id) {
  * The type parameter determines whether to filter qualification data or results data.
  *
  * @param {Object} data - The data object containing qualification and results data.
- * @param {number|string} race_id - The ID of the race to filter by.
+ * @param {number|string} raceId - The ID of the race to filter by.
  * @param {string} type - The type of data to filter ("qual" for qualification data, "results" for race results data).
  * @returns {Array} - An array of filtered data entries that match the specified race ID.
  */
-function filter_data(data, race_id, type) {
+function filterData(data, raceId, type) {
 
     if (type === "qual") {
         return data.qualificationData.filter(entry =>
-            entry.race.id === parseInt(race_id));
+            entry.race.id === parseInt(raceId));
 
     } else if (type === "results") {
         return data.resultsData.filter(entry =>
-            entry.race.id === parseInt(race_id));
+            entry.race.id === parseInt(raceId));
     }
 }
 /**
@@ -511,16 +511,16 @@ function filter_data(data, race_id, type) {
  * This function takes a time string in the format "mm:ss.sss" and converts it to the total number of seconds.
  * If the time string is empty, the function returns undefined.
  *
- * @param {string} time_string - The time string to convert, in the format "mm:ss.sss".
+ * @param {string} timeString - The time string to convert, in the format "mm:ss.sss".
  * @returns {number|undefined} - The total number of seconds, or undefined if the time string is empty.
  */
-function time_to_seconds(time_string) {
+function timeToSeconds(timeString) {
 
-    if (time_string === "") {
+    if (timeString === "") {
         return;
     } else {
 
-        const [minutes, seconds] = time_string.split(':');
+        const [minutes, seconds] = timeString.split(':');
         const [sec, ms] = seconds.split('.');
         const total_seconds = parseInt(minutes) * 60 + parseInt(sec);
         const milliseconds = ms ? parseInt(ms) : 0;
@@ -540,70 +540,70 @@ function time_to_seconds(time_string) {
  */
 function changeView(currentView) {
 
-    const home_view = document.querySelector("#home");
-    const race_view = document.querySelector("#race");
-    const buttons = document.querySelector("#nav_buttons");
+    const homeView = document.querySelector("#home");
+    const raceView = document.querySelector("#race");
+    const buttons = document.querySelector("#navButtons");
     const title = document.querySelector("#title")
-    const qual_table = document.querySelector("#qual_table");
-    const results_table = document.querySelector("#results_table");
+    const qualTable = document.querySelector("#qualTable");
+    const resultsTable = document.querySelector("#resultsTable");
     const first = document.querySelector("#first");
     const second = document.querySelector("#second");
     const third = document.querySelector("#third");
-    const first_box = document.querySelector("#first_box");
-    const second_box = document.querySelector("#second_box");
-    const third_box = document.querySelector("#third_box");
-    const loading_view = document.querySelector("#loading");
+    const firstBox = document.querySelector("#firstBox");
+    const secondBox = document.querySelector("#secondBox");
+    const thirdBox = document.querySelector("#thirdBox");
+    const loadingView = document.querySelector("#loading");
     let toasters = document.querySelector(".toaster");
 
-    document.querySelector('#race_info').innerHTML = '';
-    document.querySelector('#round_info').innerHTML = '';
-    document.querySelector('#circuit_info').innerHTML = '';
-    document.querySelector('#circuit_name').innerHTML = '';
-    document.querySelector('#date_info').innerHTML = '';
-    document.querySelector('#race_url').innerHTML = '';
+    document.querySelector('#raceInfo').innerHTML = '';
+    document.querySelector('#roundInfo').innerHTML = '';
+    document.querySelector('#circuitInfo').innerHTML = '';
+    document.querySelector('#circuitName').innerHTML = '';
+    document.querySelector('#dateInfo').innerHTML = '';
+    document.querySelector('#raceUrl').innerHTML = '';
 
     first.textContent = "";
-    first_box.classList.remove("modal-hover");
+    firstBox.classList.remove("modal-hover");
     second.textContent = "";
-    second_box.classList.remove("modal-hover");
+    secondBox.classList.remove("modal-hover");
     third.textContent = "";
-    third_box.classList.remove("modal-hover");
+    thirdBox.classList.remove("modal-hover");
 
-    qual_table.innerHTML = "";
-    results_table.innerHTML = "";
+    qualTable.innerHTML = "";
+    resultsTable.innerHTML = "";
 
-    first_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
-    second_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
-    third_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
+    firstBox.classList.remove("hover:bg-gray-200", "cursor-pointer");
+    secondBox.classList.remove("hover:bg-gray-200", "cursor-pointer");
+    thirdBox.classList.remove("hover:bg-gray-200", "cursor-pointer");
 
     if (currentView === "home") {
 
-        home_view.classList.add("hidden");
+        homeView.classList.add("hidden");
         title.classList.add("hidden");
-        race_view.classList.remove("hidden");
+        raceView.classList.remove("hidden");
         buttons.classList.remove("hidden", "lg:hidden");
         toasters.classList.add("hidden");
-        loading_view.classList.add("hidden");
+        loadingView.classList.add("hidden");
 
         currentView = "race";
         return currentView;
     }
     else if (currentView === "loading") {
 
-        home_view.classList.add("hidden");
-        race_view.classList.add("hidden");
+        homeView.classList.add("hidden");
+        raceView.classList.add("hidden");
         title.classList.add("hidden");
-        loading_view.classList.remove("hidden");
+        loadingView.classList.remove("hidden");
 
         return "loading";
 
     } else {
 
-        home_view.classList.remove("hidden");
+        homeView.classList.remove("hidden");
         title.classList.remove("hidden");
-        race_view.classList.add("hidden");
+        raceView.classList.add("hidden");
         buttons.classList.add("hidden", "lg:hidden");
-        loading_view.classList.add("hidden");
+        loadingView.classList.add("hidden");
 
         currentView = "home";
         return currentView;
@@ -622,9 +622,9 @@ function changeView(currentView) {
 function handleAddToFavorites(item, type) {
 
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.constructorId];
+    let itemCheck = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.constructorId];
 
-    if (!item_check) {
+    if (!itemCheck) {
         if (type == "drivers") {
             favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
             showHeartIcon(document.querySelectorAll(`[ref="${item.driverRef}"]`));
@@ -652,7 +652,7 @@ function handleAddToFavorites(item, type) {
  * This function retrieves the favorites from local storage and populates the respective tables for drivers,
  * constructors, and circuits. It also handles the modal display and the functionality to empty the favorites.
  */
-function setup_favorites_modal() {
+function setupFavoritesModal() {
 
     const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
     const modal = document.querySelector('#favoritesModal');
@@ -663,7 +663,7 @@ function setup_favorites_modal() {
     populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
     populateFavoritesTable(favorites.circuits, 'circuits', '#favorites_circuits_table');
 
-    handle_modal(modal, closeModal);
+    handleModal(modal, closeModal);
     emptyFavoritesButton.addEventListener('click', () => {
         console.log('clicked Empty favorites');
         localStorage.removeItem('favorites');
@@ -708,7 +708,7 @@ function populateFavoritesTable(favorites, type, tableId) {
  *
  * @param {Object} race - The race object containing circuit information.
  */
-function setup_circuit_modal(race) {
+function setupCircuitModal(race) {
 
     const circuitName = document.querySelector('.circuit-modal');
     circuitName.addEventListener('click', () => {
@@ -724,7 +724,7 @@ function setup_circuit_modal(race) {
         document.querySelector('#circuitImage').src = `images/circuit_placeholder.jpg`;
         document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
 
-        handle_modal(circuitModal, closeModalButton);
+        handleModal(circuitModal, closeModalButton);
 
         let addToFavButton = document.querySelector('#addCircuitToFav');
         let newButton = addToFavButton.cloneNode(true);
@@ -739,7 +739,7 @@ function setup_circuit_modal(race) {
  *
  * @param {number} year - The season year to be used for fetching constructor data.
  */
-function setup_constructor_modal(year) {
+function setupConstructorModal(year) {
 
     const rows = document.querySelectorAll(".constructor-modal");
 
@@ -758,8 +758,8 @@ function setup_constructor_modal(year) {
                     document.querySelector('#constructorUrl').textContent = "Wikipedia";
                     document.querySelector('#constructorUrl').href = constructor.url;
 
-                    populate_constructor_table(constructor_ref, year);
-                    handle_modal(constructorModal, closeModalButton);
+                    populateConstructorTable(constructor_ref, year);
+                    handleModal(constructorModal, closeModalButton);
 
                     let addToFavButton = document.querySelector('.addToFavorites');
 
@@ -780,7 +780,7 @@ function setup_constructor_modal(year) {
  * @param {string} constructor_ref - The reference ID of the constructor.
  * @param {number} season - The season year for which to fetch the constructor results.
  */
-function populate_constructor_table(constructor_ref, season) {
+function populateConstructorTable(constructor_ref, season) {
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingConstructors => {
@@ -824,7 +824,7 @@ function populate_constructor_table(constructor_ref, season) {
  *
  * @param {number} currentSeason - The current season year to be used for fetching driver data.
  */
-function setup_driver_modal(currentSeason) {
+function setupDriverModal(currentSeason) {
 
     const rows = document.querySelectorAll(".driver-modal");
 
@@ -841,16 +841,16 @@ function setup_driver_modal(currentSeason) {
 
                     document.querySelector('#driverName').textContent = `${driver.forename} ${driver.surname}`;
                     document.querySelector('#DOB').textContent = driver.dob;
-                    document.querySelector('#driverAge').textContent = calculate_age(driver.dob);
+                    document.querySelector('#driverAge').textContent = calculateAge(driver.dob);
                     document.querySelector('#driverNationality').textContent = driver.nationality;
                     document.querySelector('#driverUrl').href = driver.url;
                     document.querySelector('#driverUrl').textContent = "Wikipedia";
                     document.querySelector('#driverUrl').href = driver.url;
                     document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
 
-                    populate_driver_table(driver_ref, currentSeason);
+                    populateDriverTable(driver_ref, currentSeason);
 
-                    handle_modal(driverModal, closeModalButton);
+                    handleModal(driverModal, closeModalButton);
 
                     let addToFavButton = document.querySelector('#addDriverToFav');
                     let newButton = addToFavButton.cloneNode(true);
@@ -868,7 +868,7 @@ function setup_driver_modal(currentSeason) {
  * @param {number} season - The season year for which to fetch driver results.
  * @returns {void}
  */
-function populate_driver_table(driver_ref, season) {
+function populateDriverTable(driver_ref, season) {
     console.log(`driver_ref: ${driver_ref}, season: ${season}`);
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
         .then(response => response.json())
@@ -923,11 +923,11 @@ function populate_driver_table(driver_ref, season) {
  * @param {HTMLDialogElement} modal - The modal element to be handled.
  * @param {HTMLElement} closeModalButton - The button element that closes the modal.
  */
-function handle_modal(modal, closeModalButton) {
+function handleModal(modal, closeModalButton) {
 
     let currentModal = modal.id;
 
-    console.log('handle_modal');
+    console.log('handleModal');
     modal.showModal();
     document.body.classList.add('modal-open');
     modal.classList.remove('hidden');
@@ -1004,7 +1004,7 @@ function showToaster(type, added) {
  * @param {string} dob - The date of birth in a format recognized by the Date.parse() method.
  * @returns {number} The calculated age.
  */
-function calculate_age(dob) {
+function calculateAge(dob) {
     let today = new Date();
     let birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
