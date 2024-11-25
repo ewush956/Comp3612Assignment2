@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fetchSeasonData(current_season);
 
+
     });
 
     /*Event Listeners for Hardcoded Elements*/
@@ -52,7 +53,6 @@ function fetchSeasonData(season) {
 
         populate_race_data(season_data);
         race_click(season_data);
-
         return;
     }
 
@@ -125,6 +125,7 @@ function race_click(season_data) {
             populate_race_data(season_data, header);
 
         }
+
     });
     race_click.addEventListener("click", (event) => {
 
@@ -160,7 +161,7 @@ function race_click(season_data) {
 
             let results_data = filter_data(season_data, race_id, "results")
 
-            populate_results_data(results_data, "");
+            populate_results_data(results_data, "", year);
 
             results_sort.addEventListener("click", (event) => {
 
@@ -173,15 +174,13 @@ function race_click(season_data) {
 
                     console.log(header);
 
-                    populate_results_data(results_data, header);
+                    populate_results_data(results_data, header, year);
 
                 }
             });
         }
     });
 }
-
-/*Non-Callback Hell Functions*/
 function populate_race_data(season_data, header) {
 
     const race_list = document.querySelector("#race_table");
@@ -215,6 +214,7 @@ function populate_race_data(season_data, header) {
         let name = document.createElement("td");
         name.classList.add("modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${race.name}`;
+        addHeartIcon(name, race.id, "circuits");
 
         row.appendChild(round);
         row.appendChild(name);
@@ -274,10 +274,17 @@ function populate_qaul_data(data, header, year) {
         let name = document.createElement("td");
         name.classList.add("driver-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        addHeartIcon(name, d.driver.id, "drivers");
+        //name.id = d.driver.ref;
+        //row.setAttribute("data-race-id", race.id);
+        name.setAttribute("ref", d.driver.ref);
 
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         constructor.textContent = `${d.constructor.name}`;
+        constructor.setAttribute("ref", d.constructor.ref);
+        //console.log(`constructor ref: ${d.constructor.ref}`);
+        addHeartIcon(constructor, d.constructor.id, "constructors");
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -300,11 +307,11 @@ function populate_qaul_data(data, header, year) {
 
         qual_table.appendChild(row);
     }
-    setup_constructor_modal(data, year);
-    setup_driver_modal(data, year);
+    setup_driver_modal(year);
+    setup_constructor_modal(year);
 }
 
-function populate_results_data(data, header) {
+function populate_results_data(data, header, year) {
 
     console.log(data);
     const results_table = document.querySelector("#results_table");
@@ -317,9 +324,9 @@ function populate_results_data(data, header) {
 
     results_table.innerHTML = "";
 
-    first_box.classList.add("hover:bg-gray-200", "cursor-pointer");
-    second_box.classList.add("hover:bg-gray-200", "cursor-pointer");
-    third_box.classList.add("hover:bg-gray-200", "cursor-pointer");
+    first_box.classList.add("driver-modal", "cursor-pointer");
+    second_box.classList.add("driver-modal", "cursor-pointer");
+    third_box.classList.add("driver-modal", "cursor-pointer");
 
     const sorted_data = [...data].sort((a, b) => {
         if (header === "Pos") {
@@ -354,19 +361,20 @@ function populate_results_data(data, header) {
         if (d.position === 1) {
 
             first.textContent = `${d.driver.forename} ${d.driver.surname}`;
+            first_box.setAttribute("ref", d.driver.ref);
 
         }
 
         if (d.position === 2) {
 
             second.textContent = `${d.driver.forename} ${d.driver.surname}`;
-
+            second_box.setAttribute("ref", d.driver.ref);
         }
 
         if (d.position === 3) {
 
             third.textContent = `${d.driver.forename} ${d.driver.surname}`;
-
+            third_box.setAttribute("ref", d.driver.ref);
         }
 
         let row = document.createElement("tr");
@@ -376,12 +384,17 @@ function populate_results_data(data, header) {
         pos.textContent = `${d.position}`;
 
         let driver = document.createElement("td");
-        driver.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "hover:bg-gray-200", "cursor-pointer");
+        driver.classList.add("driver-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover", "cursor-pointer");
         driver.textContent = `${d.driver.forename} ${d.driver.surname}`;
+        driver.setAttribute("ref", d.driver.ref);
+        addHeartIcon(driver, d.driver.id, "drivers");
+
 
         let constructor = document.createElement("td");
-        constructor.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
+        constructor.classList.add("constructor-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
         constructor.textContent = `${d.constructor.name}`;
+        constructor.setAttribute("ref", d.constructor.ref);
+        addHeartIcon(constructor, d.constructor.id, "constructors");
 
         let laps = document.createElement("td");
         laps.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -400,6 +413,8 @@ function populate_results_data(data, header) {
         results_table.appendChild(row);
 
     }
+    setup_driver_modal(year);
+    setup_constructor_modal(year);
 }
 function populate_race_info(data, race_id) {
 
@@ -515,36 +530,41 @@ function change_view(current_view) {
 
 }
 function handleAddToFavorites(item, type) {
-    console.log('handleAddToFavorites');
+    //console.log('handleAddToFavorites');
+    //console.log('item:');
+    //console.dir(item);
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
     let item_check = favorites[type][item.id] || favorites[type][item.driverId]; // circuit also uses .id
     if (!item_check) {
-        //favorites[type][item.id] = item;
-        //favorites[type][item.id] = item.name;
-        if (type == "drivers")
+        if (type == "drivers") {
             favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
-        else
+            showHeartIcon(document.querySelectorAll(`[ref="${item.driverRef}"]`));
+        }
+        else if (type == "constructors") {
+            favorites[type][item.constructorId] = item.name;
+            showHeartIcon(document.querySelectorAll(`[ref="${item.constructorRef}"]`));
+        }
+        else if (type == "circuits") {
             favorites[type][item.id] = item.name;
-        /*
-        else if (type == "constructors") favorites[type][item.id] = item.name;
-        else if (type == "circuits") favorites[type][item.circuitId] = item.name;
-        */
+            showHeartIcon(document.querySelectorAll(`[ref="${item.ref}"]`));
+        }
 
         localStorage.setItem('favorites', JSON.stringify(favorites));
         console.log('Added to favorites');
         document.querySelector('#toaster').textContent = "Added to favorites!";
-    } else {
+    }
+    else {
         console.log('Already in favorites');
         document.querySelector('#toaster').textContent = "Already in favorites!";
     }
     // Show the toaster
     let toaster = document.querySelector('#toaster');
     toaster.classList.remove('hidden');
-    console.log('showing toaster');
+    //console.log('showing toaster');
     // Hide the toaster after 3 seconds
     showToaster();
-    console.log('favorites after add:');
-    console.dir(favorites);
+    //console.log('favorites after add:');
+    //console.dir(favorites);
 }
 function setup_favorites_modal() {
 
@@ -561,14 +581,17 @@ function setup_favorites_modal() {
     console.log("favorites:");
     console.dir(favorites);
     handle_modal(modal, closeModal);
-    //favoritesButton.addEventListener('click', () => { handle_modal(modal, closeModal); });
     emptyFavoritesButton.addEventListener('click', () => {
         localStorage.removeItem('favorites');
         populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
         populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
         populateFavoritesTable({}, 'circuits', '#favorites_circuits_table');
-    });
 
+        let cells = document.querySelectorAll('.heart-icon');
+        cells.forEach(cell => {
+            cell.classList.add('hidden');
+        });
+    });
 }
 function populateFavoritesTable(favorites, type, tableId) {
     const table = document.querySelector(tableId);
@@ -608,27 +631,36 @@ function setup_circuit_modal(race) {
 
     });
 }
-function setup_constructor_modal(data, current_season) {
-    //console.log("setup_constructor_modal");
+function setup_constructor_modal(year) {
+    console.log("setup_constructor_modal");
     const rows = document.querySelectorAll(".constructor-modal");
-
-    rows.forEach((row, index) => {
+    //console.log("rows:");
+    //console.dir(rows);
+    rows.forEach(row => {
         row.addEventListener("click", () => {
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
-            let constructor = data[index].constructor;
-            let constructor_ref = data[index].constructor.ref;
+            let constructor_ref = row.getAttribute("ref");
+            console.log(`constructor_ref: ${constructor_ref}`);
+            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
+                .then(response => response.json())
+                .then(constructor => {
+                    document.querySelector('#constructorName').textContent = constructor.name;
+                    document.querySelector('#constructorNationality').textContent = constructor.nationality;
+                    document.querySelector('#constructorUrl').href = constructor.url;
+                    document.querySelector('#constructorUrl').textContent = "Wikipedia";
+                    document.querySelector('#constructorUrl').href = constructor.url;
 
-            document.querySelector('#constructorName').textContent = constructor.name;
-            document.querySelector('#constructorNationality').textContent = constructor.nationality;
-            document.querySelector('#constructorUrl').href = constructor.url;
-            document.querySelector('#constructorUrl').textContent = "Wikipedia";
+                    populate_constructor_table(constructor_ref, year);
+                    handle_modal(constructorModal, closeModalButton);
 
-            populate_constructor_table(constructor_ref, current_season);
-            handle_modal(constructorModal, closeModalButton);
+                    let addToFavButton = document.querySelector('.addToFavorites');
+                    console.log('addToFavButton (contructor):');
+                    console.dir(constructor);
+                    addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
 
-            let addToFavButton = document.querySelector('.addToFavorites');
-            addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
+                })
+                .catch(error => console.error('Error fetching constructor data:', error));
         });
     });
 }
@@ -669,16 +701,18 @@ function populate_constructor_table(constructor_ref, season) {
         })
         .catch(error => console.error('Error fetching constructor data:', error));
 }
-function setup_driver_modal(data, current_season) {
+function setup_driver_modal(current_season) {
+    console.log("setup_driver_modal");
     const rows = document.querySelectorAll(".driver-modal");
-
-    rows.forEach((row, index) => {
+    //console.log("rows:");
+    //console.dir(rows);
+    rows.forEach(row => {
         row.addEventListener("click", () => {
 
             let driverModal = document.querySelector('#driverModal');
             let closeModalButton = document.querySelector('#closeDriverModal');
-            let driver_ref = data[index].driver.ref;
-            //Need to fetch driver data because the constructor data does not contain drivers age and url
+            let driver_ref = row.getAttribute("ref");
+
             fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
                 .then(response => response.json())
                 .then(driver => {
@@ -697,7 +731,8 @@ function setup_driver_modal(data, current_season) {
                     handle_modal(driverModal, closeModalButton);
                     let addToFavButton = document.querySelector('#addDriverToFav');
                     addToFavButton.addEventListener('click', () => handleAddToFavorites(driver, "drivers"));
-                });
+                })
+                .catch(error => console.error('Error fetching driver data:', error));
         });
     });
 }
@@ -709,12 +744,16 @@ function populate_driver_table(driver_ref, season) {
 
             const seasonKey = `season_${season}`;
             const storedData = JSON.parse(localStorage.getItem(seasonKey));
+            console.log('storedData:');
+            console.dir(storedData);
             const resultsData = storedData ? storedData.resultsData : [];
 
             let driverResultsTable = document.querySelector('#driver_results_table');
             driverResultsTable.innerHTML = ''; // Clear existing results
             let driverImage = document.querySelector('#driverImage');
             driverImage.src = "images/driver_placeholder.png";
+            console.log('matchingDrivers:');
+            console.dir(matchingDrivers);
             matchingDrivers.forEach(item => {
 
                 const row = document.createElement('tr');
@@ -727,6 +766,8 @@ function populate_driver_table(driver_ref, season) {
                 const nameCell = document.createElement('td');
                 nameCell.classList.add('py-3', 'px-6', 'border-b', 'whitespace-nowrap');
                 nameCell.textContent = item.name;
+                //console.log('item:');
+                //console.dir(item);
 
                 const posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
@@ -782,4 +823,73 @@ function calculate_age(dob) {
         age--;
     }
     return age;
+}
+
+function addHeartIcon(cell, id, type) {
+    //console.log('addHeartIcon');
+    //console.dir(cell);
+    const heartIcon = document.createElement('img');
+    heartIcon.src = 'images/heart_icon.png'; // Path to the heart
+    heartIcon.classList.add('heart-icon', 'hidden');
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+    if (favorites[type] && favorites[type][id]) {
+        heartIcon.classList.remove('hidden'); // Remove 'hidden' class if item is in favorites
+    }
+    //heartIcon.setAttribute('hidden', ''); // Hide the heart icon by default
+    cell.appendChild(heartIcon);
+    //console.log('added heart icon');
+    //console.dir(cell);
+}
+
+
+
+//works but slow af
+/*
+function addHeartIcon(cell, id, type) {
+    // Wrap the existing cell content and heart icon in a container div
+    const container = document.createElement('div');
+    container.style.display = 'grid';
+    container.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
+    container.style.alignItems = 'center';
+
+    // Move the existing text content into the container
+    const textSpan = document.createElement('span');
+    textSpan.textContent = cell.textContent; // Copy the current text
+    cell.textContent = ''; // Clear the original cell content
+    container.appendChild(textSpan);
+
+    // Create the heart icon
+    const heartIcon = document.createElement('img');
+    heartIcon.src = 'images/heart_icon.png'; // Path to the heart icon
+    heartIcon.classList.add('heart-icon', 'hidden');
+    //heartIcon.style.width = '20px'; // Set a fixed size
+    //heartIcon.style.height = '20px';
+
+    // Check if the item is in favorites
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
+    if (favorites[type] && favorites[type][id]) {
+        heartIcon.classList.remove('hidden'); // Show heart icon if in favorites
+    }
+
+    container.appendChild(heartIcon);
+
+    cell.appendChild(container);
+}
+*/
+function showHeartIcon(cells) {
+    cells.forEach(cell => {
+        const heartIcon = cell.querySelector('.heart-icon');
+        console.log('showHeartIcon');
+        console.dir(heartIcon);
+        if (heartIcon) {
+            heartIcon.classList.remove('hidden');
+        }
+    });
+}
+
+function hideHeartIcon(cell) {
+    const heartIcon = cell.querySelector('.heart-icon');
+    if (heartIcon) {
+        heartIcon.classList.add('hidden');
+    }
 }

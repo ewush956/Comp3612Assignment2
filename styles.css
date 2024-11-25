@@ -60,3 +60,9 @@ dialog aside {
     flex-direction: column;
     justify-content: center;
 }
+
+.heart-icon {
+    transition: color 0.3s ease;
+    width: 30px;
+    height: 30px;
+}
