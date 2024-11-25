@@ -59,9 +59,18 @@
         <!-- Image Container -->
         <section class="lg:w-2/3 lg:mt-0 w-full flex justify-center items-center bg-gray-50 rounded-lg mt-4 shadow-md">
             <div class="w-full h-full flex justify-center items-center">
-                <img src="images/home.jpg" alt="F1 Image" class="object-contain w-full h-full rounded-lg">
+                <!--    <img src="images/home.jpg" alt="F1 Image" class="object-contain w-full h-full rounded-lg"> -->
+                <video autoplay muted loop class="object-contain w-full h-full rounded-lg">
+                    <source src="images/title_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
             </div>
         </section>
+    </article>
+
+    <!-- Loading View -->
+    <article id="loading" class="hidden container mx-auto p-4 flex flex-col items-center justify-center h-screen">
+        <img src="images/car_vector.gif" alt="Loading" class="mb-4">
+        <p class="text-white text-xl">Loading...</p>
     </article>
 
     <!-- Full Race View -->
@@ -161,31 +170,39 @@
                         </tbody>
                     </table>
                 </div>
-            
-        
+
+
             </section>
-            <div class="constructorModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
+            <div
+                class="constructorModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
                 <dialog id="constructorModal"
                     class=" flex flex-col lg:flex-row bg-white lg:w-4/6 lg:h-4/6 overflow-y-auto p-6 gap-6 bg-opacity-0">
-                    <aside class="flex flex-row lg:flex-col grow h-1/2 lg:h-full lg:w-2/6 justify-center bg-white items-center shadow-md border rounded-lg p-4">
+                    <aside
+                        class="flex flex-row lg:flex-col grow h-1/2 lg:h-full lg:w-2/6 justify-center bg-white items-center shadow-md border rounded-lg p-4">
                         <div class="m-4">
                             <h2 class="text-3xl font-bold mb-4 mt-4">Constructor Details</h2>
                             <div id="constructorDetails" class="mb-4">
                                 <!-- Constructor details will be populated here -->
                                 <p class="mb-2"><strong>Name:</strong> <span id="constructorName"></span></p>
-                                <p class="mb-2"><strong>Nationality:</strong> <span id="constructorNationality"></span></p>
-                                <p class="mb-2"><strong>URL:</strong> <a id="constructorUrl" href="#" class="text-blue-500 underline"></a></p>
+                                <p class="mb-2"><strong>Nationality:</strong> <span id="constructorNationality"></span>
+                                </p>
+                                <p class="mb-2"><strong>URL:</strong> <a id="constructorUrl" href="#"
+                                        class="text-blue-500 underline"></a></p>
                             </div>
                         </div>
                         <div class="w-2/6 lg:w-full">
-                            <button class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to Favorites</button>
-                            <button id="closeModal" class="bg-red-500 text-white px-4 py-2 rounded w-full">Close</button>
+                            <button class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
+                                Favorites</button>
+                            <button id="closeModal"
+                                class="bg-red-500 text-white px-4 py-2 rounded w-full">Close</button>
                         </div>
                     </aside>
-            
-                    <div class="overflow-y-auto h-full flex-grow border border-gray-300 rounded-lg shadow-lg w-full lg:w-4/6">
+
+                    <div
+                        class="overflow-y-auto h-full flex-grow border border-gray-300 rounded-lg shadow-lg w-full lg:w-4/6">
                         <table class="bg-white border w-full">
-                            <thead class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
+                            <thead
+                                class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
                                 <tr>
                                     <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Round</th>
                                     <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
@@ -201,36 +218,42 @@
                     <div class="hidden toaster fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-30">
                         Added
                         to Favorites
-                    </div> 
+                    </div>
                 </dialog>
             </div>
             <div class="driverModal hidden"></div>
-                <dialog id="driverModal"
+            <dialog id="driverModal"
                 class="hidden fixed inset-0 flex lg:flex-row flex-col overflow-y-auto items-center p-6 justify-center bg-white  h-full lg:w-4/6 lg:h-4/6 gap-6 overflow-y-hidden bg-opacity-0 z-20">
-                <aside class=" flex flex-row lg:flex-col flex grow h-1/2 lg:h-full lg:w-2/6 justify-center bg-white  items-center shadow-md border rounded-lg p-4">
+                <aside
+                    class=" flex flex-row lg:flex-col flex grow h-1/2 lg:h-full lg:w-2/6 justify-center bg-white  items-center shadow-md border rounded-lg p-4">
                     <div class="m-4">
                         <h2 class="text-3xl items-center font-bold mb-4 mt-4">Driver Details</h2>
                         <div id="driverDetails" class="mb-6">
                             <p class="mb-2 whitespace-nowrap"><strong>Name:</strong> <span id="driverName"></span></p>
                             <p class="mb-2 whitespace-nowrap"><strong>Date of Birth:</strong> <span id="DOB"></span></p>
                             <p class="mb-2 whitespace-nowrap"><strong>Age:</strong> <span id="driverAge"></span></p>
-                            <p class="mb-2 whitespace-nowrap"><strong>Nationality:</strong> <span id="driverNationality"></span></p>
+                            <p class="mb-2 whitespace-nowrap"><strong>Nationality:</strong> <span
+                                    id="driverNationality"></span></p>
                             <p class="mb-2 whitespace-nowrap"><strong>URL:</strong> <a id="driverUrl" href="#"
                                     class="text-blue-500 underline"></a></p>
                         </div>
                     </div>
                     <div class="w-2/6 lg:w-full">
                         <img id="driverImage" src="" alt="Driver Image" class="w-full rounded mb-4">
-                        <button id="addDriverToFav" class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
+                        <button id="addDriverToFav"
+                            class="addToFavorites bg-blue-500 text-white px-4 py-2 rounded w-full mb-4">Add to
                             Favorites</button>
-                        <button id="closeDriverModal" class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
+                        <button id="closeDriverModal"
+                            class="bg-red-500 text-white px-4 py-2 rounded w-full mb-6">Close</button>
                     </div>
                 </aside>
-                
-            
-                <div class="overflow-y-auto h-full flex-grow border border-gray-300 rounded-lg shadow-lg w-full lg:w-4/6">
+
+
+                <div
+                    class="overflow-y-auto h-full flex-grow border border-gray-300 rounded-lg shadow-lg w-full lg:w-4/6">
                     <table class="bg-white border w-full">
-                        <thead class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
+                        <thead
+                            class="bg-gray-200 text-gray-600 uppercase text-xs sm:text-sm leading-normal sticky top-0 z-10">
                             <tr>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Round</th>
                                 <th class="py-3 px-6 text-left hover:bg-gray-300 cursor-pointer">Name</th>
@@ -246,14 +269,13 @@
                 <div class="hidden toaster fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-50">
                     Added
                     to Favorites
-                </div> 
+                </div>
 
             </dialog>
         </div>
-        
+
         <div class="circuitModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
-            <dialog id="circuitModal"
-                class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl flex gap-4">
+            <dialog id="circuitModal" class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl flex gap-4">
                 <aside class="flex-1 max-w-sm">
                     <img id="circuitImage" src="" alt="Circuit Image" class="w-full rounded mb-6">
                 </aside>
@@ -276,14 +298,15 @@
                 <div class="hidden toaster fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded z-30">
                     Added
                     to Favorites
-                </div> 
+                </div>
             </dialog>
         </div>
 
-        <div class="favoritesModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30" >
+        <div class="favoritesModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
             <dialog id="favoritesModal"
                 class="hidden p-6 bg-white max-w-4xl w-full h-full lg:h-3/5 max-h-screen bg-opacity-0">
-                <div class="flex flex-col lg:flex-row gap-4 bg-white p-4 justify-between items-center mb-4 shadow-md border rounded-lg">
+                <div
+                    class="flex flex-col lg:flex-row gap-4 bg-white p-4 justify-between items-center mb-4 shadow-md border rounded-lg">
                     <h2 class="text-3xl font-bold">Favorites</h2>
                     <div class="flex gap-2">
                         <button id="emptyFavorites" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
@@ -304,8 +327,7 @@
                                     <th class="px-4 py-2 text-left font-bold">Drivers</th>
                                 </tr>
                             </thead>
-                            <tbody id="favorites_drivers_table"
-                                class="text-gray-700 text-sm h-20 lg:h-40  block">
+                            <tbody id="favorites_drivers_table" class="text-gray-700 text-sm h-20 lg:h-40  block">
                                 <!-- Favorite drivers will populate here -->
                             </tbody>
                         </table>
@@ -319,8 +341,7 @@
                                     <th class="px-4 py-2 text-left font-bold">Constructors</th>
                                 </tr>
                             </thead>
-                            <tbody id="favorites_constructors_table"
-                                class="text-gray-700 text-sm  h-20 lg:h-40  block">
+                            <tbody id="favorites_constructors_table" class="text-gray-700 text-sm  h-20 lg:h-40  block">
                                 <!-- Favorite constructors will populate here -->
                             </tbody>
                         </table>
@@ -334,8 +355,7 @@
                                     <th class="px-4 py-2 text-left font-bold">Circuits</th>
                                 </tr>
                             </thead>
-                            <tbody id="favorites_circuits_table"
-                                class="text-gray-700 text-sm h-20 lg:h-40  block">
+                            <tbody id="favorites_circuits_table" class="text-gray-700 text-sm h-20 lg:h-40  block">
                                 <!-- Favorite circuits will populate here -->
                             </tbody>
                         </table>
@@ -345,9 +365,9 @@
         </div>
 
 
-            <!-- Add a temporary visual notification (toaster) -->
+        <!-- Add a temporary visual notification (toaster) -->
 
-        
+
     </article>
 
 
