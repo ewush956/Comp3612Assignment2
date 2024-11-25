@@ -53,9 +53,6 @@ function fetchSeasonData(season) {
 
         populate_race_data(season_data);
         race_click(season_data);
-        console.log("NEW CALL");
-        console.dir(season_data);
-
         return;
     }
 
@@ -128,6 +125,7 @@ function race_click(season_data) {
             populate_race_data(season_data, header);
 
         }
+
     });
     race_click.addEventListener("click", (event) => {
 
@@ -309,6 +307,8 @@ function populate_qaul_data(data, header, year) {
 
         qual_table.appendChild(row);
     }
+    setup_driver_modal(year);
+    setup_constructor_modal(year);
 }
 
 function populate_results_data(data, header, year) {
@@ -824,7 +824,7 @@ function calculate_age(dob) {
     }
     return age;
 }
-/*
+
 function addHeartIcon(cell, id, type) {
     //console.log('addHeartIcon');
     //console.dir(cell);
@@ -840,7 +840,11 @@ function addHeartIcon(cell, id, type) {
     //console.log('added heart icon');
     //console.dir(cell);
 }
-    */
+
+
+
+//works but slow af
+/*
 function addHeartIcon(cell, id, type) {
     // Wrap the existing cell content and heart icon in a container div
     const container = document.createElement('div');
@@ -858,8 +862,8 @@ function addHeartIcon(cell, id, type) {
     const heartIcon = document.createElement('img');
     heartIcon.src = 'images/heart_icon.png'; // Path to the heart icon
     heartIcon.classList.add('heart-icon', 'hidden');
-    heartIcon.style.width = '20px'; // Set a fixed size
-    heartIcon.style.height = '20px';
+    //heartIcon.style.width = '20px'; // Set a fixed size
+    //heartIcon.style.height = '20px';
 
     // Check if the item is in favorites
     const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
@@ -867,13 +871,11 @@ function addHeartIcon(cell, id, type) {
         heartIcon.classList.remove('hidden'); // Show heart icon if in favorites
     }
 
-    // Append the heart icon to the container
     container.appendChild(heartIcon);
 
-    // Append the container back into the cell
     cell.appendChild(container);
 }
-
+*/
 function showHeartIcon(cells) {
     cells.forEach(cell => {
         const heartIcon = cell.querySelector('.heart-icon');
@@ -888,7 +890,6 @@ function showHeartIcon(cells) {
 function hideHeartIcon(cell) {
     const heartIcon = cell.querySelector('.heart-icon');
     if (heartIcon) {
-        //heartIcon.setAttribute('hidden', '');
         heartIcon.classList.add('hidden');
     }
 }
