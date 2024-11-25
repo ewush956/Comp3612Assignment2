@@ -822,7 +822,7 @@ function showToaster(type, added) {
     const toaster = document.querySelectorAll('.toaster');
 
     if(type === "constructors"){
-        if(added === "dontAdd"){
+        if(added === "add"){
             toaster[0].textContent = "Added to favorites!";
         }else{
             toaster[0].textContent = "Already in favorites!";
@@ -834,7 +834,7 @@ function showToaster(type, added) {
         }, 2000); // Adjust the timeout duration as needed
 
     }else if(type === "drivers"){
-        if(added === "dontAdd"){
+        if(added === "add"){
             toaster[1].textContent = "Added to favorites!";
         }else{
             toaster[1].textContent = "Already in favorites!";
@@ -848,7 +848,7 @@ function showToaster(type, added) {
 
 
     }else{
-        if(added === "dontAdd"){
+        if(added === "add"){
             toaster[2].textContent = "Added to favorites!";
         }else{
             toaster[2].textContent = "Already in favorites!";
