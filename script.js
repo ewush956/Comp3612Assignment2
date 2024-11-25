@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
     //localStorage.clear();
 
-    let current_view = "home";
+    let currentView = "home";
 
     season.addEventListener("change", () => {
 
         let season = document.querySelector("#season");
-        let current_season = season.value;
-        console.log(`current_season: ${season.value}`);
+        let currentSeason = season.value;
+        console.log(`currentSeason: ${season.value}`);
 
-        current_view = change_view(current_view);
+        currentView = changeView(currentView);
 
-        fetchSeasonData(current_season);
+        fetchSeasonData(currentSeason);
 
 
     });
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     home_button.addEventListener("click", () => {
 
-        current_view = change_view(current_view);
+        currentView = changeView(currentView);
         season.value = "select";
 
     });
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     logo.addEventListener("click", () => {
 
-        current_view = change_view("race");
+        currentView = changeView("race");
         season.value = "select";
 
     });
@@ -206,7 +206,6 @@ function populate_race_data(season_data, header) {
     for (let race of sorted_data) {
 
         let row = document.createElement("tr");
-        row.classList.add("hover:bg-gray-200", "cursor-pointer");
         row.setAttribute("data-race-id", race.id);
 
         let round = document.createElement("td");
@@ -326,9 +325,9 @@ function populate_results_data(data, header, year) {
 
     results_table.innerHTML = "";
 
-    first_box.classList.add("driver-modal", "cursor-pointer");
-    second_box.classList.add("driver-modal", "cursor-pointer");
-    third_box.classList.add("driver-modal", "cursor-pointer");
+    first_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
+    second_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
+    third_box.classList.add("driver-modal", "cursor-pointer", "modal-hover");
 
     const sorted_data = [...data].sort((a, b) => {
         if (header === "Pos") {
@@ -480,7 +479,7 @@ function time_to_seconds(time_string) {
     }
 
 }
-function change_view(current_view) {
+function changeView(currentView) {
 
     const home_view = document.querySelector("#home");
     const race_view = document.querySelector("#race");
@@ -498,9 +497,21 @@ function change_view(current_view) {
     let toasters = document.querySelector(".toaster");
     let modals = document.querySelector("dialog");
 
+    document.querySelector('#race_info').innerHTML = '';
+    document.querySelector('#round_info').innerHTML = '';
+    document.querySelector('#circuit_info').innerHTML = '';
+    document.querySelector('#circuit_name').innerHTML = '';
+    document.querySelector('#date_info').innerHTML = '';
+    document.querySelector('#race_url').innerHTML = '';
+
+
     first.textContent = "";
+    first_box.classList.remove("modal-hover");
     second.textContent = "";
+    second_box.classList.remove("modal-hover");
     third.textContent = "";
+    third_box.classList.remove("modal-hover");
+
 
     qual_table.innerHTML = "";
     results_table.innerHTML = "";
@@ -509,7 +520,7 @@ function change_view(current_view) {
     second_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
     third_box.classList.remove("hover:bg-gray-200", "cursor-pointer");
 
-    if (current_view === "home") {
+    if (currentView === "home") {
 
         home_view.classList.add("hidden");
         title.classList.add("hidden");
@@ -518,7 +529,7 @@ function change_view(current_view) {
         toasters.classList.add("hidden");
         loading_view.classList.add("hidden");
 
-        current_view = "race";
+        currentView = "race";
 
         return current_view;
     }
@@ -540,9 +551,9 @@ function change_view(current_view) {
         buttons.classList.add("hidden", "lg:hidden");
         loading_view.classList.add("hidden");
 
-        current_view = "home";
+        currentView = "home";
 
-        return current_view;
+        return currentView;
 
     }
 
@@ -717,7 +728,7 @@ function populate_constructor_table(constructor_ref, season) {
         })
         .catch(error => console.error('Error fetching constructor data:', error));
 }
-function setup_driver_modal(current_season) {
+function setup_driver_modal(currentSeason) {
     //console.log("setup_driver_modal");
     const rows = document.querySelectorAll(".driver-modal");
     //console.log("rows:");
@@ -742,7 +753,7 @@ function setup_driver_modal(current_season) {
                     document.querySelector('#driverUrl').href = driver.url;
                     document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
 
-                    populate_driver_table(driver_ref, current_season);
+                    populate_driver_table(driver_ref, currentSeason);
 
                     handle_modal(driverModal, closeModalButton);
 
