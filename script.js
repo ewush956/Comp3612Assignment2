@@ -138,8 +138,8 @@ function race_click(season_data) {
             console.log(race_id);
             populate_race_info(season_data, race_id);
             let qual_data = filter_data(season_data, race_id, "qual");
-            console.log(`season_data: ${season_data}`);
-            console.dir(season_data);
+            //console.log(`season_data: ${season_data}`);
+            //console.dir(season_data);
 
             populate_qaul_data(qual_data, "", year);
 
@@ -419,9 +419,9 @@ function populate_results_data(data, header, year) {
 function populate_race_info(data, race_id) {
 
     let race = data.raceData.find(race => race.id === parseInt(race_id));
-    console.log("race: ");
-    console.dir(race);
-    console.log(race_id);
+    //console.log("race: ");
+    //console.dir(race);
+    //console.log(race_id);
     //let race_id = race.id;
     let race_info = document.querySelector("#race_info");
     let round_info = document.querySelector("#round_info");
@@ -530,11 +530,11 @@ function change_view(current_view) {
 
 }
 function handleAddToFavorites(item, type) {
-    //console.log('handleAddToFavorites');
-    //console.log('item:');
-    //console.dir(item);
+    console.log('handleAddToFavorites');
+    console.log('item:');
+    console.dir(item);
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    let item_check = favorites[type][item.id] || favorites[type][item.driverId]; // circuit also uses .id
+    let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.constructorId];
     if (!item_check) {
         if (type == "drivers") {
             favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
@@ -573,10 +573,11 @@ function setup_favorites_modal() {
     populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
     populateFavoritesTable(favorites.circuits, 'circuits', '#favorites_circuits_table');
 
-    console.log("favorites:");
-    console.dir(favorites);
+    //console.log("favorites:");
+    //console.dir(favorites);
     handle_modal(modal, closeModal);
     emptyFavoritesButton.addEventListener('click', () => {
+        console.log('clicked Empty favorites');
         localStorage.removeItem('favorites');
         populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
         populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
@@ -590,8 +591,8 @@ function setup_favorites_modal() {
 }
 function populateFavoritesTable(favorites, type, tableId) {
     const table = document.querySelector(tableId);
-    console.log('populateFavoritesTable');
-    console.dir(favorites);
+    //console.log('populateFavoritesTable');
+    //console.dir(favorites);
     table.innerHTML = '';
 
     for (let id in favorites) {
@@ -604,11 +605,11 @@ function populateFavoritesTable(favorites, type, tableId) {
     }
 }
 function setup_circuit_modal(race) {
-    console.log('setup_circuit_modal');
+    //console.log('setup_circuit_modal');
     const circuitName = document.querySelector('.circuit-modal');
     circuitName.addEventListener('click', () => {
-        console.log('race:');
-        console.dir(race);
+        //console.log('race:');
+        //console.dir(race);
         let circuitModal = document.querySelector('#circuitModal');
         let closeModalButton = document.querySelector('#closeCircuitModal');
 
@@ -622,12 +623,14 @@ function setup_circuit_modal(race) {
 
         handle_modal(circuitModal, closeModalButton);
         let addToFavButton = document.querySelector('#addCircuitToFav');
-        addToFavButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
-
+        //addToFavButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
+        let newButton = addToFavButton.cloneNode(true);
+        addToFavButton.parentNode.replaceChild(newButton, addToFavButton);
+        newButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
     });
 }
 function setup_constructor_modal(year) {
-    console.log("setup_constructor_modal");
+    //console.log("setup_constructor_modal");
     const rows = document.querySelectorAll(".constructor-modal");
     //console.log("rows:");
     //console.dir(rows);
@@ -650,10 +653,10 @@ function setup_constructor_modal(year) {
                     handle_modal(constructorModal, closeModalButton);
 
                     let addToFavButton = document.querySelector('.addToFavorites');
-                    console.log('addToFavButton (contructor):');
-                    console.dir(constructor);
-                    addToFavButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
 
+                    let newButton = addToFavButton.cloneNode(true);
+                    addToFavButton.parentNode.replaceChild(newButton, addToFavButton);
+                    newButton.addEventListener('click', () => handleAddToFavorites(constructor, "constructors"));
                 })
                 .catch(error => console.error('Error fetching constructor data:', error));
         });
@@ -697,7 +700,7 @@ function populate_constructor_table(constructor_ref, season) {
         .catch(error => console.error('Error fetching constructor data:', error));
 }
 function setup_driver_modal(current_season) {
-    console.log("setup_driver_modal");
+    //console.log("setup_driver_modal");
     const rows = document.querySelectorAll(".driver-modal");
     //console.log("rows:");
     //console.dir(rows);
@@ -724,8 +727,11 @@ function setup_driver_modal(current_season) {
                     populate_driver_table(driver_ref, current_season);
 
                     handle_modal(driverModal, closeModalButton);
+
                     let addToFavButton = document.querySelector('#addDriverToFav');
-                    addToFavButton.addEventListener('click', () => handleAddToFavorites(driver, "drivers"));
+                    let newButton = addToFavButton.cloneNode(true);
+                    addToFavButton.parentNode.replaceChild(newButton, addToFavButton);
+                    newButton.addEventListener('click', () => handleAddToFavorites(driver, "drivers"));
                 })
                 .catch(error => console.error('Error fetching driver data:', error));
         });
@@ -739,16 +745,16 @@ function populate_driver_table(driver_ref, season) {
 
             const seasonKey = `season_${season}`;
             const storedData = JSON.parse(localStorage.getItem(seasonKey));
-            console.log('storedData:');
-            console.dir(storedData);
+            //console.log('storedData:');
+            //console.dir(storedData);
             const resultsData = storedData ? storedData.resultsData : [];
 
             let driverResultsTable = document.querySelector('#driver_results_table');
             driverResultsTable.innerHTML = ''; // Clear existing results
             let driverImage = document.querySelector('#driverImage');
             driverImage.src = "images/driver_placeholder.png";
-            console.log('matchingDrivers:');
-            console.dir(matchingDrivers);
+            //console.log('matchingDrivers:');
+            //console.dir(matchingDrivers);
             matchingDrivers.forEach(item => {
 
                 const row = document.createElement('tr');
@@ -923,8 +929,8 @@ function addHeartIcon(cell, id, type) {
 function showHeartIcon(cells) {
     cells.forEach(cell => {
         const heartIcon = cell.querySelector('.heart-icon');
-        console.log('showHeartIcon');
-        console.dir(heartIcon);
+        //console.log('showHeartIcon');
+        //console.dir(heartIcon);
         if (heartIcon) {
             heartIcon.classList.remove('hidden');
         }
