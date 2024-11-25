@@ -1,23 +1,20 @@
+/**
+ * Initializes the application once the DOM content is fully loaded.
+ *
+ * This function sets up event listeners for various elements such as the season dropdown, home button, logo, and favorites button.
+ * It handles changing views, fetching season data, and setting up the favorites modal.
+ */
 document.addEventListener("DOMContentLoaded", () => {
-    //localStorage.clear();
 
     let currentView = "home";
-
     season.addEventListener("change", () => {
 
         let season = document.querySelector("#season");
         let currentSeason = season.value;
-        console.log(`currentSeason: ${season.value}`);
 
         currentView = changeView(currentView);
-
         fetchSeasonData(currentSeason);
-
-
     });
-
-    /*Event Listeners for Hardcoded Elements*/
-
     let home_button = document.querySelector("#home_button");
 
     home_button.addEventListener("click", () => {
@@ -26,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         season.value = "select";
 
     });
-
     let logo = document.querySelector("#logo");
 
     logo.addEventListener("click", () => {
@@ -35,19 +31,24 @@ document.addEventListener("DOMContentLoaded", () => {
         season.value = "select";
 
     });
-
     let favorites_button = document.querySelector("#favorites_button");
     favorites_button.addEventListener("click", () => setup_favorites_modal());
-
 });
-
-/*Callback Hell (top down)*/
+/**
+ * Fetches and processes season data for a given year.
+ *
+ * This function checks if the season data is already stored in local storage. If it is, it uses the stored data.
+ * If not, it fetches the race, qualification, and results data from the API, stores it in local storage, and processes it.
+ * The function also handles changing the view to a loading state while fetching data and then to the home view once data is fetched.
+ *
+ * @param {number} season - The year of the race season to fetch data for.
+ */
 function fetchSeasonData(season) {
 
     let season_data
     const seasonKey = `season_${season}`;
-
     const storedData = localStorage.getItem(seasonKey);
+
     if (storedData) {
         season_data = JSON.parse(storedData);
 
@@ -55,13 +56,12 @@ function fetchSeasonData(season) {
         race_click(season_data);
         return;
     }
-    change_view("loading");
+    changeView("loading");
     const raceDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/races.php?season=${season}`;
     const qualificationDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/qualifying.php?season=${season}`;
     const resultsDataUrl = `https://www.randyconnolly.com/funwebdev/3rd/api/f1/results.php?season=${season}`;
 
     season_data = {};
-    /*Fetch all three large data files*/
     fetch(raceDataUrl)
         .then(response => {
             if (!response.ok) {
@@ -91,12 +91,8 @@ function fetchSeasonData(season) {
         })
         .then(resultsData => {
             season_data.resultsData = resultsData;
-
             localStorage.setItem(seasonKey, JSON.stringify(season_data));
-
-            //console.log(season_data);
-            //unhide
-            change_view("home");
+            changeView("home");
             populate_race_data(season_data, "");
             race_click(season_data);
         })
@@ -104,15 +100,22 @@ function fetchSeasonData(season) {
             console.error('An error occurred:', error.message);
         });
 }
-
+/**
+ * Sets up event listeners for sorting and clicking on race data.
+ *
+ * This function adds event listeners to handle sorting of race, qualification, and results data tables.
+ * It also sets up event listeners for clicking on race rows to populate race information, qualification data, and results data.
+ *
+ * @param {Object} season_data - The data object containing race information for the season.
+ */
 function race_click(season_data) {
+
     let race_sort = document.querySelector("#race_head");
-
     let qual_sort = document.querySelector("#qual_head");
-
     let results_sort = document.querySelector("#results_head");
     let race_click = document.querySelector("#race_table");
     let year = season_data.raceData[0].year;
+
     race_sort.addEventListener("click", (event) => {
 
         let element = event.target;
@@ -121,13 +124,8 @@ function race_click(season_data) {
 
             let cell = element;
             let header = cell.textContent;
-
-            console.log(header);
-
             populate_race_data(season_data, header);
-
         }
-
     });
     race_click.addEventListener("click", (event) => {
 
@@ -137,34 +135,22 @@ function race_click(season_data) {
             let row = element.closest("tr");
             let race_id = row.getAttribute("data-race-id");
 
-            console.log(race_id);
             populate_race_info(season_data, race_id);
             let qual_data = filter_data(season_data, race_id, "qual");
-            //console.log(`season_data: ${season_data}`);
-            //console.dir(season_data);
 
             populate_qaul_data(qual_data, "", year);
-
             qual_sort.addEventListener("click", (event) => {
 
                 let element = event.target;
-
                 if (element.tagName === "TH") {
 
                     let cell = element;
                     let header = cell.textContent;
-
-                    console.log(header);
-
                     populate_qaul_data(qual_data, header, year);
-
                 }
             });
-
             let results_data = filter_data(season_data, race_id, "results")
-
             populate_results_data(results_data, "", year);
-
             results_sort.addEventListener("click", (event) => {
 
                 let element = event.target;
@@ -173,16 +159,21 @@ function race_click(season_data) {
 
                     let cell = element;
                     let header = cell.textContent;
-
-                    console.log(header);
-
                     populate_results_data(results_data, header, year);
-
                 }
             });
         }
     });
 }
+/**
+ * Populates the race data table with sorted data.
+ *
+ * This function takes season race data, sorts it based on the specified header, and populates the race table with the sorted data.
+ * It also updates the race header with the year of the races.
+ *
+ * @param {Object} season_data - The data object containing race information for the season.
+ * @param {string} header - The header by which to sort the data (e.g., "Name", "Rnd").
+ */
 function populate_race_data(season_data, header) {
 
     const race_list = document.querySelector("#race_table");
@@ -202,7 +193,6 @@ function populate_race_data(season_data, header) {
         }
         return 0;
     });
-
     for (let race of sorted_data) {
 
         let row = document.createElement("tr");
@@ -215,19 +205,23 @@ function populate_race_data(season_data, header) {
         let name = document.createElement("td");
         name.classList.add("modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${race.name}`;
-        addHeartIcon(name, race.id, "circuits");
 
         row.appendChild(round);
         row.appendChild(name);
 
-
-
         race_list.appendChild(row);
-
     }
-
 }
-
+/**
+ * Populates the qualification data table with sorted data.
+ *
+ * This function takes qualification data, sorts it based on the specified header, and populates the qualification table with the sorted data.
+ * It also sets up the modals for drivers and constructors.
+ *
+ * @param {Array} data - The array of qualification data objects to populate the table with.
+ * @param {string} header - The header by which to sort the data (e.g., "Pos", "Driver", "Const", "Q1", "Q2", "Q3").
+ * @param {number} year - The year of the race season.
+ */
 function populate_qaul_data(data, header, year) {
 
     const qual_table = document.querySelector("#qual_table");
@@ -249,7 +243,6 @@ function populate_qaul_data(data, header, year) {
             const constructor_name_a = a.constructor.name;
             const constructor_name_b = b.constructor.name;
 
-
             return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
         } else if (header === "Q1") {
 
@@ -263,29 +256,58 @@ function populate_qaul_data(data, header, year) {
         }
         return 0;
     });
-
     for (let d of sorted_data) {
 
         let row = document.createElement("tr");
 
         let pos = document.createElement("td");
-        pos.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+        pos.classList.add("px-2", "py-2", "border-b", "text-sm", "text-gray-800");
         pos.textContent = `${d.position}`;
 
         let name = document.createElement("td");
         name.classList.add("driver-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         name.textContent = `${d.driver.forename} ${d.driver.surname}`;
         addHeartIcon(name, d.driver.id, "drivers");
-        //name.id = d.driver.ref;
-        //row.setAttribute("data-race-id", race.id);
+
         name.setAttribute("ref", d.driver.ref);
 
+
+        /* let constructor = document.createElement("td");
+         constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
+         constructor.textContent = `${d.constructor.name}`;
+         constructor.setAttribute("ref", d.constructor.ref);
+         addHeartIcon(constructor, d.constructor.id, "constructors");
+         */
         let constructor = document.createElement("td");
-        constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
-        constructor.textContent = `${d.constructor.name}`;
-        constructor.setAttribute("ref", d.constructor.ref);
-        //console.log(`constructor ref: ${d.constructor.ref}`);
+        constructor.classList.add("constructor-modal", "modal-hover", "px-2", "py-2", "w-36", "border-b", "text-sm", "text-gray-800");
+        constructor.style.display = 'grid';
+        constructor.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
+        constructor.style.alignItems = 'center';
+
+        // Create a span for the constructor name text
+        let textSpan = document.createElement('span');
+        textSpan.textContent = `${d.constructor.name}`;
+
+        // Append the text span to the constructor cell
+        constructor.appendChild(textSpan);
+
+        // Add the heart icon
         addHeartIcon(constructor, d.constructor.id, "constructors");
+
+        constructor.setAttribute("ref", d.constructor.ref);
+
+        /*
+    const container = document.createElement('div');
+container.style.display = 'grid';
+container.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
+container.style.alignItems = 'center';
+
+// Move the existing text content into the container
+const textSpan = document.createElement('span');
+textSpan.textContent = cell.textContent; // Copy the current text
+cell.textContent = ''; // Clear the original cell content
+container.appendChild(textSpan);
+*/
 
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
@@ -311,7 +333,16 @@ function populate_qaul_data(data, header, year) {
     setup_driver_modal(year);
     setup_constructor_modal(year);
 }
-
+/**
+ * Populates the results table with race data and updates the podium positions.
+ *
+ * This function takes race data, sorts it based on the specified header, and populates the results table with the sorted data.
+ * It also updates the podium positions (first, second, and third) with the respective drivers and sets up the modals for drivers and constructors.
+ *
+ * @param {Array} data - The array of race data objects to populate the table with.
+ * @param {string} header - The header by which to sort the data (e.g., "Pos", "Driver", "Const", "Laps", "Pts").
+ * @param {number} year - The year of the race season.
+ */
 function populate_results_data(data, header, year) {
 
     console.log(data);
@@ -338,13 +369,11 @@ function populate_results_data(data, header, year) {
             const full_name_a = `${a.driver.forename} ${a.driver.surname}`;
             const full_name_b = `${b.driver.forename} ${b.driver.surname}`;
 
-
             return full_name_a > full_name_b ? 1 : full_name_a < full_name_b ? -1 : 0;
         } else if (header === "Const") {
 
             const constructor_name_a = a.constructor.name;
             const constructor_name_b = b.constructor.name;
-
 
             return constructor_name_a > constructor_name_b ? 1 : constructor_name_a < constructor_name_b ? -1 : 0;
         } else if (header === "Laps") {
@@ -356,31 +385,23 @@ function populate_results_data(data, header, year) {
         }
         return 0;
     });
-
     for (let d of sorted_data) {
 
         if (d.position === 1) {
-
             first.textContent = `${d.driver.forename} ${d.driver.surname}`;
             first_box.setAttribute("ref", d.driver.ref);
             addHeartIcon(first, d.driver.id, "drivers");
-
         }
-
         if (d.position === 2) {
-
             second.textContent = `${d.driver.forename} ${d.driver.surname}`;
             second_box.setAttribute("ref", d.driver.ref);
             addHeartIcon(second, d.driver.id, "drivers");
         }
-
         if (d.position === 3) {
-
             third.textContent = `${d.driver.forename} ${d.driver.surname}`;
             third_box.setAttribute("ref", d.driver.ref);
             addHeartIcon(third, d.driver.id, "drivers");
         }
-
         let row = document.createElement("tr");
 
         let pos = document.createElement("td");
@@ -392,7 +413,6 @@ function populate_results_data(data, header, year) {
         driver.textContent = `${d.driver.forename} ${d.driver.surname}`;
         driver.setAttribute("ref", d.driver.ref);
         addHeartIcon(driver, d.driver.id, "drivers");
-
 
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "px-4", "py-2", "border-b", "text-sm", "text-gray-800", "modal-hover");
@@ -415,18 +435,24 @@ function populate_results_data(data, header, year) {
         row.appendChild(points);
 
         results_table.appendChild(row);
-
     }
     setup_driver_modal(year);
     setup_constructor_modal(year);
 }
+/**
+ * Populates the race information section with details of the specified race.
+ *
+ * This function finds the race data corresponding to the given race ID and updates the relevant HTML elements
+ * with the race's information, including the race name, round, circuit name, date, and a link to more information.
+ * It also sets up the circuit modal for the race.
+ *
+ * @param {Object} data - The data object containing race information.
+ * @param {number|string} race_id - The ID of the race to display information for.
+ */
 function populate_race_info(data, race_id) {
 
     let race = data.raceData.find(race => race.id === parseInt(race_id));
-    //console.log("race: ");
-    //console.dir(race);
-    //console.log(race_id);
-    //let race_id = race.id;
+
     let race_info = document.querySelector("#race_info");
     let round_info = document.querySelector("#round_info");
     let circuit_info = document.querySelector("#circuit_info");
@@ -435,7 +461,6 @@ function populate_race_info(data, race_id) {
     let race_url = document.querySelector("#race_url")
 
     race_info.textContent = `Results for the ${race.year} ${race.name}`;
-
     round_info.textContent = `Round: ${race.round} `;
 
     circuit_info.textContent = `Circuit: `;
@@ -445,28 +470,45 @@ function populate_race_info(data, race_id) {
     date_info.textContent = `Date: ${race.date} `;
 
     race_url.textContent = "See More";
-
     race_url.href = race.url;
-
     race_url.classList.add("cursor-pointer", "underline");
+
     setup_circuit_modal(race);
 }
-
+/**
+ * Filters data based on race ID and type.
+ *
+ * This function filters the provided data to return entries that match the specified race ID.
+ * The type parameter determines whether to filter qualification data or results data.
+ *
+ * @param {Object} data - The data object containing qualification and results data.
+ * @param {number|string} race_id - The ID of the race to filter by.
+ * @param {string} type - The type of data to filter ("qual" for qualification data, "results" for race results data).
+ * @returns {Array} - An array of filtered data entries that match the specified race ID.
+ */
 function filter_data(data, race_id, type) {
 
     if (type === "qual") {
-
-        return data.qualificationData.filter(entry => entry.race.id === parseInt(race_id));
+        return data.qualificationData.filter(entry =>
+            entry.race.id === parseInt(race_id));
 
     } else if (type === "results") {
-
-        return data.resultsData.filter(entry => entry.race.id === parseInt(race_id));
+        return data.resultsData.filter(entry =>
+            entry.race.id === parseInt(race_id));
     }
 }
+/**
+ * Converts a time string in the format "mm:ss.sss" to total seconds.
+ *
+ * This function takes a time string in the format "mm:ss.sss" and converts it to the total number of seconds.
+ * If the time string is empty, the function returns undefined.
+ *
+ * @param {string} time_string - The time string to convert, in the format "mm:ss.sss".
+ * @returns {number|undefined} - The total number of seconds, or undefined if the time string is empty.
+ */
 function time_to_seconds(time_string) {
 
     if (time_string === "") {
-
         return;
     } else {
 
@@ -477,8 +519,17 @@ function time_to_seconds(time_string) {
 
         return total_seconds + milliseconds / 1000;
     }
-
 }
+/**
+ * Changes the current view of the application.
+ *
+ * This function updates the visibility of various sections of the application based on the provided view.
+ * It clears the content of certain elements and adjusts the classes to show or hide the appropriate sections.
+ *
+ * If the function is passed a value of "loading" the current view will not change.
+ * @param {string} currentView - The view to switch to. Possible values are "home", "race", and "loading".
+ * @returns {string} - The updated current view.
+ */
 function changeView(currentView) {
 
     const home_view = document.querySelector("#home");
@@ -495,7 +546,6 @@ function changeView(currentView) {
     const third_box = document.querySelector("#third_box");
     const loading_view = document.querySelector("#loading");
     let toasters = document.querySelector(".toaster");
-    let modals = document.querySelector("dialog");
 
     document.querySelector('#race_info').innerHTML = '';
     document.querySelector('#round_info').innerHTML = '';
@@ -504,14 +554,12 @@ function changeView(currentView) {
     document.querySelector('#date_info').innerHTML = '';
     document.querySelector('#race_url').innerHTML = '';
 
-
     first.textContent = "";
     first_box.classList.remove("modal-hover");
     second.textContent = "";
     second_box.classList.remove("modal-hover");
     third.textContent = "";
     third_box.classList.remove("modal-hover");
-
 
     qual_table.innerHTML = "";
     results_table.innerHTML = "";
@@ -530,17 +578,15 @@ function changeView(currentView) {
         loading_view.classList.add("hidden");
 
         currentView = "race";
-
-        return current_view;
+        return currentView;
     }
-    else if (current_view === "loading") {
+    else if (currentView === "loading") {
 
         home_view.classList.add("hidden");
         race_view.classList.add("hidden");
         title.classList.add("hidden");
         loading_view.classList.remove("hidden");
 
-        //doesn't change view until data is loaded
         return "loading";
 
     } else {
@@ -552,18 +598,24 @@ function changeView(currentView) {
         loading_view.classList.add("hidden");
 
         currentView = "home";
-
         return currentView;
-
     }
-
 }
+/**
+ * Adds an item to the favorites list and updates local storage.
+ *
+ * This function checks if the item is already in the favorites list. If it is not, it adds the item to the appropriate
+ * category (drivers, constructors, or circuits) in the favorites list, updates local storage, and shows a heart icon
+ * next to the item. It also displays a toaster notification indicating the item was added.
+ *
+ * @param {Object} item - The item to be added to the favorites. This can be a driver, constructor, or circuit object.
+ * @param {string} type - The type of the item (e.g., "drivers", "constructors", "circuits").
+ */
 function handleAddToFavorites(item, type) {
-    console.log('handleAddToFavorites');
-    console.log('item:');
-    console.dir(item);
+
     let favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
     let item_check = favorites[type][item.id] || favorites[type][item.driverId] || favorites[type][item.constructorId];
+
     if (!item_check) {
         if (type == "drivers") {
             favorites[type][item.driverId] = `${item.forename} ${item.surname}`;
@@ -577,23 +629,24 @@ function handleAddToFavorites(item, type) {
             favorites[type][item.id] = item.name;
             showHeartIcon(document.querySelectorAll(`[ref="${item.ref}"]`));
         }
-
         localStorage.setItem('favorites', JSON.stringify(favorites));
         console.log('Added to favorites');
         showToaster(type, "add");
     }
     else {
-        console.log('Already in favorites');
         showToaster(type, "dontAdd");
     }
-
-
-
 }
+/**
+ * Sets up the favorites modal by populating it with the current favorites from local storage.
+ * It also sets up the modal's close button and the "Empty Favorites" button.
+ *
+ * This function retrieves the favorites from local storage and populates the respective tables for drivers,
+ * constructors, and circuits. It also handles the modal display and the functionality to empty the favorites.
+ */
 function setup_favorites_modal() {
 
     const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    const favoritesButton = document.querySelector('#favorites_button');
     const modal = document.querySelector('#favoritesModal');
     const closeModal = document.querySelector('#closeFavoritesModal');
     const emptyFavoritesButton = document.querySelector('#emptyFavorites');
@@ -602,8 +655,6 @@ function setup_favorites_modal() {
     populateFavoritesTable(favorites.constructors, 'constructors', '#favorites_constructors_table');
     populateFavoritesTable(favorites.circuits, 'circuits', '#favorites_circuits_table');
 
-    //console.log("favorites:");
-    //console.dir(favorites);
     handle_modal(modal, closeModal);
     emptyFavoritesButton.addEventListener('click', () => {
         console.log('clicked Empty favorites');
@@ -618,10 +669,19 @@ function setup_favorites_modal() {
         });
     });
 }
+/**
+ * Populates a table with the given favorites data.
+ *
+ * This function clears the existing content of the table and then populates it with the provided favorites data.
+ * Each favorite is added as a new row in the table.
+ *
+ * @param {Object} favorites - An object containing the favorites data, where the key is the favorite's ID and the value is the favorite's name.
+ * @param {string} type - The type of favorites (e.g., "drivers", "constructors", "circuits").
+ * @param {string} tableId - The ID of the table element to populate.
+ */
 function populateFavoritesTable(favorites, type, tableId) {
+
     const table = document.querySelector(tableId);
-    //console.log('populateFavoritesTable');
-    //console.dir(favorites);
     table.innerHTML = '';
 
     for (let id in favorites) {
@@ -633,12 +693,18 @@ function populateFavoritesTable(favorites, type, tableId) {
         table.appendChild(row);
     }
 }
+/**
+ * Sets up the circuit modal by adding a click event listener to the element with the class "circuit-modal".
+ * When the element is clicked, it populates the modal with the circuit's information and sets up the modal's close button
+ * and the "Add to Favorites" button.
+ *
+ * @param {Object} race - The race object containing circuit information.
+ */
 function setup_circuit_modal(race) {
-    //console.log('setup_circuit_modal');
+
     const circuitName = document.querySelector('.circuit-modal');
     circuitName.addEventListener('click', () => {
-        //console.log('race:');
-        //console.dir(race);
+
         let circuitModal = document.querySelector('#circuitModal');
         let closeModalButton = document.querySelector('#closeCircuitModal');
 
@@ -651,18 +717,24 @@ function setup_circuit_modal(race) {
         document.querySelector('#driverImage').src = `images/driver_placeholder.png`;
 
         handle_modal(circuitModal, closeModalButton);
+
         let addToFavButton = document.querySelector('#addCircuitToFav');
-        //addToFavButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
         let newButton = addToFavButton.cloneNode(true);
         addToFavButton.parentNode.replaceChild(newButton, addToFavButton);
         newButton.addEventListener('click', () => handleAddToFavorites(race.circuit, "circuits"));
     });
 }
+/**
+ * Sets up the constructor modal by adding click event listeners to elements with the class "constructor-modal".
+ * When a row is clicked, it fetches constructor data from an API and populates the modal with the constructor's information.
+ * It also sets up the modal's close button and the "Add to Favorites" button.
+ *
+ * @param {number} year - The season year to be used for fetching constructor data.
+ */
 function setup_constructor_modal(year) {
-    //console.log("setup_constructor_modal");
+
     const rows = document.querySelectorAll(".constructor-modal");
-    //console.log("rows:");
-    //console.dir(rows);
+
     rows.forEach(row => {
         row.addEventListener("click", () => {
             let constructorModal = document.querySelector('#constructorModal');
@@ -691,6 +763,15 @@ function setup_constructor_modal(year) {
         });
     });
 }
+/**
+ * Fetches and populates the constructor results table for a given constructor and season.
+ *
+ * This function makes an API call to fetch the constructor results for the specified constructor reference and season.
+ * It then populates the table with the race results, including the round, race name, driver name, and position order.
+ *
+ * @param {string} constructor_ref - The reference ID of the constructor.
+ * @param {number} season - The season year for which to fetch the constructor results.
+ */
 function populate_constructor_table(constructor_ref, season) {
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
         .then(response => response.json())
@@ -728,11 +809,17 @@ function populate_constructor_table(constructor_ref, season) {
         })
         .catch(error => console.error('Error fetching constructor data:', error));
 }
+/**
+ * Sets up the driver modal by adding click event listeners to elements with the class "driver-modal".
+ * When a row is clicked, it fetches driver data from an API and populates the modal with the driver's information.
+ * It also sets up the modal's close button and the "Add to Favorites" button.
+ *
+ * @param {number} currentSeason - The current season year to be used for fetching driver data.
+ */
 function setup_driver_modal(currentSeason) {
-    //console.log("setup_driver_modal");
+
     const rows = document.querySelectorAll(".driver-modal");
-    //console.log("rows:");
-    //console.dir(rows);
+
     rows.forEach(row => {
         row.addEventListener("click", () => {
 
@@ -766,6 +853,13 @@ function setup_driver_modal(currentSeason) {
         });
     });
 }
+/**
+ * Populates the driver results table with data fetched from an API and local storage.
+ *
+ * @param {string} driver_ref - The reference ID of the driver.
+ * @param {number} season - The season year for which to fetch driver results.
+ * @returns {void}
+ */
 function populate_driver_table(driver_ref, season) {
     console.log(`driver_ref: ${driver_ref}, season: ${season}`);
     fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
@@ -774,16 +868,14 @@ function populate_driver_table(driver_ref, season) {
 
             const seasonKey = `season_${season}`;
             const storedData = JSON.parse(localStorage.getItem(seasonKey));
-            //console.log('storedData:');
-            //console.dir(storedData);
+
             const resultsData = storedData ? storedData.resultsData : [];
 
             let driverResultsTable = document.querySelector('#driver_results_table');
-            driverResultsTable.innerHTML = ''; // Clear existing results
+            driverResultsTable.innerHTML = '';
             let driverImage = document.querySelector('#driverImage');
             driverImage.src = "images/driver_placeholder.png";
-            //console.log('matchingDrivers:');
-            //console.dir(matchingDrivers);
+
             matchingDrivers.forEach(item => {
 
                 const row = document.createElement('tr');
@@ -796,8 +888,6 @@ function populate_driver_table(driver_ref, season) {
                 const nameCell = document.createElement('td');
                 nameCell.classList.add('py-3', 'px-6', 'border-b', 'whitespace-nowrap');
                 nameCell.textContent = item.name;
-                //console.log('item:');
-                //console.dir(item);
 
                 const posCell = document.createElement('td');
                 posCell.classList.add('py-3', 'px-6', 'border-b');
@@ -819,6 +909,12 @@ function populate_driver_table(driver_ref, season) {
         })
         .catch(error => console.error('Error fetching driver data:', error));
 }
+/**
+ * Handles the display and closing of a modal dialog.
+ *
+ * @param {HTMLDialogElement} modal - The modal element to be handled.
+ * @param {HTMLElement} closeModalButton - The button element that closes the modal.
+ */
 function handle_modal(modal, closeModalButton) {
 
     let currentModal = modal.id;
@@ -845,8 +941,13 @@ function handle_modal(modal, closeModalButton) {
         wrapper.classList.add('hidden');
     });
 }
+/**
+ * Displays a toaster notification based on the type and action provided.
+ *
+ * @param {string} type - The type of item being added to favorites. Can be "constructors", "drivers", or any other string.
+ * @param {string} added - The action performed. Should be "add" if the item is being added to favorites, otherwise any other string.
+ */
 function showToaster(type, added) {
-
 
     const toaster = document.querySelectorAll('.toaster');
 
@@ -860,7 +961,7 @@ function showToaster(type, added) {
         toaster[0].classList.add('show');
         setTimeout(() => {
             toaster[0].classList.remove('show');
-        }, 2000); // Adjust the timeout duration as needed
+        }, 2000);
 
     } else if (type === "drivers") {
         if (added === "add") {
@@ -873,8 +974,7 @@ function showToaster(type, added) {
         toaster[1].classList.add('show');
         setTimeout(() => {
             toaster[1].classList.remove('show');
-        }, 2000); // Adjust the timeout duration as needed
-
+        }, 2000);
 
     } else {
         if (added === "add") {
@@ -887,12 +987,15 @@ function showToaster(type, added) {
         toaster[2].classList.add('show');
         setTimeout(() => {
             toaster[2].classList.remove('show');
-        }, 2000); // Adjust the timeout duration as needed
-
+        }, 2000);
     }
-
 }
-//Make a helper function that calculates the age of a driver
+/**
+ * Calculates the age based on the date of birth.
+ *
+ * @param {string} dob - The date of birth in a format recognized by the Date.parse() method.
+ * @returns {number} The calculated age.
+ */
 function calculate_age(dob) {
     let today = new Date();
     let birthDate = new Date(dob);
@@ -903,25 +1006,23 @@ function calculate_age(dob) {
     }
     return age;
 }
-
+/**
+ * Adds a heart icon to a specified cell element. The heart icon is visible if the item is in the favorites list stored in localStorage.
+ *
+ * @param {HTMLElement} cell - The cell element to which the heart icon will be added.
+ * @param {string} id - The unique identifier of the item (driver, constructor, or circuit).
+ * @param {string} type - The type of the item (e.g., 'drivers', 'constructors', 'circuits').
+ */
 function addHeartIcon(cell, id, type) {
-    //console.log('addHeartIcon');
-    //console.dir(cell);
     const heartIcon = document.createElement('img');
-    heartIcon.src = 'images/heart_icon.png'; // Path to the heart
-    heartIcon.classList.add('heart-icon', 'hidden');
+    heartIcon.src = 'images/heart_icon.png';
+    heartIcon.classList.add('heart-icon', 'hidden', 'heart-icon');
     const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    if (favorites[type] && favorites[type][id]) {
-        heartIcon.classList.remove('hidden'); // Remove 'hidden' class if item is in favorites
-    }
-    //heartIcon.setAttribute('hidden', ''); // Hide the heart icon by default
+    if (favorites[type] && favorites[type][id])
+        heartIcon.classList.remove('hidden');
+
     cell.appendChild(heartIcon);
-    //console.log('added heart icon');
-    //console.dir(cell);
 }
-
-
-
 //works but slow af
 /*
 function addHeartIcon(cell, id, type) {
@@ -955,17 +1056,24 @@ function addHeartIcon(cell, id, type) {
     cell.appendChild(container);
 }
 */
+/**
+ * Shows the heart icon within a given table cell.
+ *
+ * @param {NodeList} cells - The table cells containing the heart icon.
+ */
 function showHeartIcon(cells) {
     cells.forEach(cell => {
         const heartIcon = cell.querySelector('.heart-icon');
-        //console.log('showHeartIcon');
-        //console.dir(heartIcon);
         if (heartIcon) {
             heartIcon.classList.remove('hidden');
         }
     });
 }
-
+/**
+ * Hides the heart icon within a given table cell.
+ *
+ * @param {HTMLElement} cell - The table cell element containing the heart icon.
+ */
 function hideHeartIcon(cell) {
     const heartIcon = cell.querySelector('.heart-icon');
     if (heartIcon) {
