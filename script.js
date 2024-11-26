@@ -270,53 +270,12 @@ function populateQaulData(data, header, year) {
         name.setAttribute("ref", d.driver.ref);
         addHeartIcon(name, d.driver.id, "drivers");
 
-
-        /*
-         let name = document.createElement("td");
-         name.classList.add("driver-modal", "modal-hover", "px-2", "py-2", "w-36", "border-b", "text-sm", "text-gray-800");
-         name.style.display = 'grid';
-         name.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
-         //name.style.alignItems = 'center';
- 
-         // Create a span for the driver name text
-         let nameTextSpan = document.createElement('span');
-         nameTextSpan.textContent = `${d.driver.forename} ${d.driver.surname}`;
- 
-         // Append the text span to the name cell
-         name.appendChild(nameTextSpan);
- 
-         // Add the heart icon
-         addHeartIcon(name, d.driver.id, "drivers");
- 
-         // Set the ref attribute
-         name.setAttribute("ref", d.driver.ref);
-         row.appendChild(name);
- */
         let constructor = document.createElement("td");
         constructor.classList.add("constructor-modal", "modal-hover", "px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         constructor.textContent = `${d.constructor.name}`;
         constructor.setAttribute("ref", d.constructor.ref);
         addHeartIcon(constructor, d.constructor.id, "constructors");
 
-        /*
-        let constructor = document.createElement("td");
-        constructor.classList.add("constructor-modal", "modal-hover", "px-2", "py-2", "w-36", "border-b", "text-sm", "text-gray-800");
-        constructor.style.display = 'grid';
-        constructor.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
-        constructor.style.alignItems = 'center';
-
-        // Create a span for the constructor name text
-        let textSpan = document.createElement('span');
-        textSpan.textContent = `${d.constructor.name}`;
-
-        // Append the text span to the constructor cell
-        constructor.appendChild(textSpan);
-        row.appendChild(constructor);
-        // Add the heart icon
-        addHeartIcon(constructor, d.constructor.id, "constructors");
-
-        constructor.setAttribute("ref", d.constructor.ref);
-*/
         let q1 = document.createElement("td");
         q1.classList.add("px-4", "py-2", "border-b", "text-sm", "text-gray-800");
         q1.textContent = `${d.q1}`;
@@ -353,7 +312,6 @@ function populateQaulData(data, header, year) {
  */
 function populateResultsData(data, header, year) {
 
-    console.log(data);
     const resultsTable = document.querySelector("#resultsTable");
     const first = document.querySelector("#first");
     const second = document.querySelector("#second");
@@ -455,7 +413,7 @@ function populateResultsData(data, header, year) {
  * It also sets up the circuit modal for the race.
  *
  * @param {Object} data - The data object containing race information.
- * @param {number|string} raceId - The ID of the race to display information for.
+ * @param {number} raceId - The ID of the race to display information for.
  */
 function populateRaceInfo(data, raceId) {
 
@@ -639,7 +597,6 @@ function handleAddToFavorites(item, type) {
             showHeartIcon(document.querySelectorAll(`[ref="${item.ref}"]`));
         }
         localStorage.setItem('favorites', JSON.stringify(favorites));
-        console.log('Added to favorites');
         showToaster(type, "add");
     }
     else {
@@ -666,7 +623,6 @@ function setupFavoritesModal() {
 
     handleModal(modal, closeModal);
     emptyFavoritesButton.addEventListener('click', () => {
-        console.log('clicked Empty favorites');
         localStorage.removeItem('favorites');
         populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
         populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
@@ -749,7 +705,7 @@ function setupConstructorModal(year) {
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
             let constructor_ref = row.getAttribute("ref");
-            console.log(`constructor_ref: ${constructor_ref}`);
+
             fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
                 .then(response => response.json())
                 .then(constructor => {
@@ -870,7 +826,7 @@ function setupDriverModal(currentSeason) {
  * @returns {void}
  */
 function populateDriverTable(driver_ref, season) {
-    console.log(`driver_ref: ${driver_ref}, season: ${season}`);
+
     fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingDrivers => {
@@ -928,7 +884,6 @@ function handleModal(modal, closeModalButton) {
 
     let currentModal = modal.id;
 
-    console.log('handleModal');
     modal.showModal();
     document.body.classList.add('modal-open');
     modal.classList.remove('hidden');
@@ -943,7 +898,6 @@ function handleModal(modal, closeModalButton) {
         modal.classList.add('hidden');
         wrapper.classList.add('hidden');
     });
-
     modal.addEventListener('close', () => {
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
@@ -1032,39 +986,6 @@ function addHeartIcon(cell, id, type) {
 
     cell.appendChild(heartIcon);
 }
-//works but slow af
-/*
-function addHeartIcon(cell, id, type) {
-    // Wrap the existing cell content and heart icon in a container div
-    const container = document.createElement('div');
-    container.style.display = 'grid';
-    container.style.gridTemplateColumns = '1fr auto'; // Two columns: text and heart icon
-    container.style.alignItems = 'center';
-
-    // Move the existing text content into the container
-    const textSpan = document.createElement('span');
-    textSpan.textContent = cell.textContent; // Copy the current text
-    cell.textContent = ''; // Clear the original cell content
-    container.appendChild(textSpan);
-
-    // Create the heart icon
-    const heartIcon = document.createElement('img');
-    heartIcon.src = 'images/heart_icon.png'; // Path to the heart icon
-    heartIcon.classList.add('heart-icon', 'hidden');
-    //heartIcon.style.width = '20px'; // Set a fixed size
-    //heartIcon.style.height = '20px';
-
-    // Check if the item is in favorites
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || { drivers: {}, constructors: {}, circuits: {} };
-    if (favorites[type] && favorites[type][id]) {
-        heartIcon.classList.remove('hidden'); // Show heart icon if in favorites
-    }
-
-    container.appendChild(heartIcon);
-
-    cell.appendChild(container);
-}
-*/
 /**
  * Shows the heart icon within a given table cell.
  *
