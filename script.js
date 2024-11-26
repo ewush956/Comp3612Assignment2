@@ -312,7 +312,6 @@ function populateQaulData(data, header, year) {
  */
 function populateResultsData(data, header, year) {
 
-    console.log(data);
     const resultsTable = document.querySelector("#resultsTable");
     const first = document.querySelector("#first");
     const second = document.querySelector("#second");
@@ -414,7 +413,7 @@ function populateResultsData(data, header, year) {
  * It also sets up the circuit modal for the race.
  *
  * @param {Object} data - The data object containing race information.
- * @param {number|string} raceId - The ID of the race to display information for.
+ * @param {number} raceId - The ID of the race to display information for.
  */
 function populateRaceInfo(data, raceId) {
 
@@ -598,7 +597,6 @@ function handleAddToFavorites(item, type) {
             showHeartIcon(document.querySelectorAll(`[ref="${item.ref}"]`));
         }
         localStorage.setItem('favorites', JSON.stringify(favorites));
-        console.log('Added to favorites');
         showToaster(type, "add");
     }
     else {
@@ -625,7 +623,6 @@ function setupFavoritesModal() {
 
     handleModal(modal, closeModal);
     emptyFavoritesButton.addEventListener('click', () => {
-        console.log('clicked Empty favorites');
         localStorage.removeItem('favorites');
         populateFavoritesTable({}, 'drivers', '#favorites_drivers_table');
         populateFavoritesTable({}, 'constructors', '#favorites_constructors_table');
@@ -708,7 +705,7 @@ function setupConstructorModal(year) {
             let constructorModal = document.querySelector('#constructorModal');
             let closeModalButton = document.querySelector('#closeModal');
             let constructor_ref = row.getAttribute("ref");
-            console.log(`constructor_ref: ${constructor_ref}`);
+
             fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
                 .then(response => response.json())
                 .then(constructor => {
@@ -829,7 +826,7 @@ function setupDriverModal(currentSeason) {
  * @returns {void}
  */
 function populateDriverTable(driver_ref, season) {
-    console.log(`driver_ref: ${driver_ref}, season: ${season}`);
+
     fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingDrivers => {
@@ -887,7 +884,6 @@ function handleModal(modal, closeModalButton) {
 
     let currentModal = modal.id;
 
-    console.log('handleModal');
     modal.showModal();
     document.body.classList.add('modal-open');
     modal.classList.remove('hidden');
@@ -902,7 +898,6 @@ function handleModal(modal, closeModalButton) {
         modal.classList.add('hidden');
         wrapper.classList.add('hidden');
     });
-
     modal.addEventListener('close', () => {
         document.body.classList.remove('modal-open');
         modal.classList.add('hidden');
