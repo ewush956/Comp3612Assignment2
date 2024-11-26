@@ -82,16 +82,6 @@
         <section class="lg:w-2/3 lg:mt-0 w-full flex justify-center items-center bg-gray-50 rounded-lg mt-4 shadow-md">
             <div class="w-full h-full flex justify-center items-center">
                 <img src="images/home.jpg" alt="F1 Image" class="object-contain w-full h-full rounded-lg">
-                <!-- <video autoplay muted loop class="object-contain w-full h-full rounded-lg">
-                    <source src="images/title_video.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                -->
-                <!--
-                <iframe id="titleVideo" width="100%" height="100%" src="https://www.youtube.com/embed/8skRpKa5lYE?si=IQP1pDVzR0tAkK4q"
-                    title="YouTube video player" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                -->
             </div>
         </section>
     </article>
@@ -154,7 +144,7 @@
                             </tr>
                         </thead>
                         <tbody id="qualTable" class="text-gray-800 text-sm" id="qualifying_table">
-                            <!-- Qualifying results here -->
+                            <!-- Qualifying results will populate here -->
                         </tbody>
                     </table>
                 </div>
@@ -164,13 +154,12 @@
             <section id="raceResults" class="w-full lg:w-4/12 p-4 bg-white shadow-md border rounded-lg mb-4">
                 <h2 class="text-xl font-semibold mb-4 text-center">Results</h2>
                 <div class="flex w-full space-x-4 object-contain justify-center mb-4">
-                    <!-- First box -->
+                    <!-- First, Second and Third Place Boxes -->
                     <div id="firstBox"
                         class=" flex flex-1 flex-col items-center mx-auto h-28 w-36 p-1 bg-white shadow-md border rounded-lg">
                         <img class="h-14 w-14 mb-2 object-contain object-top" src="images/gold.png" alt="">
                         <p id="first" class="text-sm font-semibold text-center"></p>
                     </div>
-                    <!-- Second and third boxes -->
                     <div id="secondBox"
                         class=" flex flex-1 flex-col items-center h-28 w-36 p-1 bg-white shadow-md border rounded-lg">
                         <img class="h-14 w-14 mb-2 object-contain object-top" src="images/silver.png" alt="">
@@ -195,15 +184,15 @@
                             </tr>
                         </thead>
                         <tbody id="resultsTable" class="text-gray-700 text-sm" id="race_results_table">
-                            <!-- Race results here -->
+                            <!-- Race results will populate here -->
                         </tbody>
                     </table>
                 </div>
 
 
             </section>
-            <div
-                class="constructorModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
+            <!-- Constructor Modal -->
+            <div class="constructorModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
                 <dialog id="constructorModal"
                     class=" flex flex-col lg:flex-row bg-white lg:w-4/6 lg:h-4/6 overflow-y-auto p-6 gap-6 bg-opacity-0">
                     <aside
@@ -211,7 +200,7 @@
                         <div class="m-4 flex flex-col justify-center items-center">
                             <h2 class="text-2xl font-bold mb-4 mt-4 ">Constructor Details</h2>
                             <div id="constructorDetails" class="mb-4">
-                                <!-- Constructor details will be populated here -->
+                                <!-- Constructor details will populate here -->
                                 <p class="mb-2"><strong>Name:</strong> <span id="constructorName"></span></p>
                                 <p class="mb-2"><strong>Nationality:</strong> <span id="constructorNationality"></span>
                                 </p>
@@ -250,6 +239,7 @@
                     </div>
                 </dialog>
             </div>
+            <!-- Driver Modal -->
             <div class="driverModal hidden"></div>
             <dialog id="driverModal"
                 class="hidden fixed inset-0 flex lg:flex-row flex-col overflow-y-auto items-center p-6 justify-center bg-white  h-full lg:w-4/6 lg:h-4/6 gap-6 overflow-y-hidden bg-opacity-0 z-20">
@@ -302,7 +292,7 @@
 
             </dialog>
         </div>
-
+        <!-- Circuit Modal -->
         <div class="circuitModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
             <dialog id="circuitModal" class="hidden p-6 bg-white shadow-md border rounded-lg max-w-4xl flex gap-4">
                 <aside class="flex-1 max-w-sm">
@@ -311,7 +301,7 @@
                 <div class="flex-2">
                     <h2 class="text-xl font-semibold mb-4 text-center">Circuit Details</h2>
                     <div id="circuitDetails" class="mb-4">
-                        <!-- Circuit details will be populated here -->
+                        <!-- Circuit details will populate here -->
                         <p class="mb-2"><strong>Name:</strong> <span id="circuitName"></span></p>
                         <p class="mb-2"><strong>Location:</strong> <span id="circuitLocation"></span></p>
                         <p class="mb-2"><strong>Country:</strong> <span id="circuitCountry"></span></p>
@@ -330,7 +320,7 @@
                 </div>
             </dialog>
         </div>
-
+        <!-- Favorites Modal -->
         <div class="favoritesModal hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
             <dialog id="favoritesModal"
                 class="hidden p-6 bg-white max-w-4xl w-full h-full lg:h-3/5 max-h-screen bg-opacity-0">
@@ -392,22 +382,8 @@
                 </div>
             </dialog>
         </div>
-
-
-        <!-- Add a temporary visual notification (toaster) -->
-
-
     </article>
 
-
-    <!-- Constructor Modal 
-    <aside id="constructor" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded p-4 w-1/2">
-            <h3 class="text-xl font-semibold mb-4">Constructor Details</h3>
-    <button class="close-modal mt-4 px-4 py-2 bg-red-500 text-white rounded">Close</button>
-    </div>
-    </aside>
-    -->
 </body>
 
 </html>
