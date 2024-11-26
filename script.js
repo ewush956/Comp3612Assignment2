@@ -138,7 +138,7 @@ function raceClick(seasonData) {
             populateRaceInfo(seasonData, raceId);
             let qualData = filterData(seasonData, raceId, "qual");
 
-            populateQaulData(qualData, "", year);
+            populateQaulData(qualData, "noSort", year);
             qualSort.addEventListener("click", (event) => {
 
                 let element = event.target;
@@ -150,7 +150,7 @@ function raceClick(seasonData) {
                 }
             });
             let resultsData = filterData(seasonData, raceId, "results")
-            populateResultsData(resultsData, "", year);
+            populateResultsData(resultsData, "noSort", year);
             resultsSort.addEventListener("click", (event) => {
 
                 let element = event.target;
@@ -184,10 +184,22 @@ function populateRaceData(seasonData, header) {
     raceHeader.textContent = `${seasonData.raceData[0].year} Races`;
 
     const sortedData = [...seasonData.raceData].sort((a, b) => {
+
+        if (header === "noSort") {
+        
+            return 0;
+        }
+
         if (header === "Name") {
+
+            document.querySelector("#raceRnd").classList.remove("bg-gray-400");
+            document.querySelector("#raceName").classList.add("bg-gray-400");
 
             return a.name > b.name ? 1 : (a.name < b.name ? -1 : 0);
         } else if (header === "Rnd") {
+
+            document.querySelector("#raceRnd").classList.add("bg-gray-400");
+            document.querySelector("#raceName").classList.remove("bg-gray-400");
 
             return a.round - b.round;
         }
@@ -230,27 +242,75 @@ function populateQaulData(data, header, year) {
 
     const sortedData = [...data].sort((a, b) => {
 
+        if (header === "noSort") {
+            
+            return 0;
+        }
+
         if (header === "Pos") {
+
+            document.querySelector("#qualPos").classList.add("bg-gray-400");
+            document.querySelector("#qualDriver").classList.remove("bg-gray-400");
+            document.querySelector("#qualConst").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ1").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ2").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ3").classList.remove("bg-gray-400");
 
             return a.position - b.position;
         } else if (header === "Driver") {
 
             const fullNameA = `${a.driver.forename} ${a.driver.surname}`;
             const fullNameB = `${b.driver.forename} ${b.driver.surname}`;
+
+            document.querySelector("#qualPos").classList.remove("bg-gray-400");
+            document.querySelector("#qualDriver").classList.add("bg-gray-400");
+            document.querySelector("#qualConst").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ1").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ2").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ3").classList.remove("bg-gray-400");
+
             return fullNameA > fullNameB ? 1 : fullNameA < fullNameB ? -1 : 0;
         } else if (header === "Const") {
 
             const constructorNameA = a.constructor.name;
             const constructorNameB = b.constructor.name;
 
+            document.querySelector("#qualPos").classList.remove("bg-gray-400");
+            document.querySelector("#qualDriver").classList.remove("bg-gray-400");
+            document.querySelector("#qualConst").classList.add("bg-gray-400");
+            document.querySelector("#qualQ1").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ2").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ3").classList.remove("bg-gray-400");
+
             return constructorNameA > constructorNameB ? 1 : constructorNameA < constructorNameB ? -1 : 0;
         } else if (header === "Q1") {
+
+            document.querySelector("#qualPos").classList.remove("bg-gray-400");
+            document.querySelector("#qualDriver").classList.remove("bg-gray-400");
+            document.querySelector("#qualConst").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ1").classList.add("bg-gray-400");
+            document.querySelector("#qualQ2").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ3").classList.remove("bg-gray-400");
 
             return timeToSeconds(a.q1) - timeToSeconds(b.q1);
         } else if (header === "Q2") {
 
+            document.querySelector("#qualPos").classList.remove("bg-gray-400");
+            document.querySelector("#qualDriver").classList.remove("bg-gray-400");
+            document.querySelector("#qualConst").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ1").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ2").classList.add("bg-gray-400");
+            document.querySelector("#qualQ3").classList.remove("bg-gray-400");
+
             return timeToSeconds(a.q2) - timeToSeconds(b.q2);
         } else if (header === "Q3") {
+
+            document.querySelector("#qualPos").classList.remove("bg-gray-400");
+            document.querySelector("#qualDriver").classList.remove("bg-gray-400");
+            document.querySelector("#qualConst").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ1").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ2").classList.remove("bg-gray-400");
+            document.querySelector("#qualQ3").classList.add("bg-gray-400");
 
             return timeToSeconds(a.q3) - timeToSeconds(b.q3);
         }
@@ -325,32 +385,64 @@ function populateResultsData(data, header, year) {
     firstBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
     secondBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
     thirdBox.classList.add("driver-modal", "cursor-pointer", "modal-hover");
-
+    
     const sortedData = [...data].sort((a, b) => {
+        if (header === "noSort") {
+            
+            return 0;
+        }
+    
         if (header === "Pos") {
-
+            document.querySelector("#resultsPos").classList.add("bg-gray-400");
+            document.querySelector("#resultsDriver").classList.remove("bg-gray-400");
+            document.querySelector("#resultsConst").classList.remove("bg-gray-400");
+            document.querySelector("#resultsLaps").classList.remove("bg-gray-400");
+            document.querySelector("#resultsPts").classList.remove("bg-gray-400");
+    
             return a.position - b.position;
         } else if (header === "Driver") {
-
             const fullNameA = `${a.driver.forename} ${a.driver.surname}`;
             const fullNameB = `${b.driver.forename} ${b.driver.surname}`;
-
+    
+            document.querySelector("#resultsPos").classList.remove("bg-gray-400");
+            document.querySelector("#resultsDriver").classList.add("bg-gray-400");
+            document.querySelector("#resultsConst").classList.remove("bg-gray-400");
+            document.querySelector("#resultsLaps").classList.remove("bg-gray-400");
+            document.querySelector("#resultsPts").classList.remove("bg-gray-400");
+    
             return fullNameA > fullNameB ? 1 : fullNameA < fullNameB ? -1 : 0;
         } else if (header === "Const") {
-
             const constructorNameA = a.constructor.name;
             const constructorNameB = b.constructor.name;
-
+    
+            document.querySelector("#resultsPos").classList.remove("bg-gray-400");
+            document.querySelector("#resultsDriver").classList.remove("bg-gray-400");
+            document.querySelector("#resultsConst").classList.add("bg-gray-400");
+            document.querySelector("#resultsLaps").classList.remove("bg-gray-400");
+            document.querySelector("#resultsPts").classList.remove("bg-gray-400");
+    
             return constructorNameA > constructorNameB ? 1 : constructorNameA < constructorNameB ? -1 : 0;
         } else if (header === "Laps") {
-
+            document.querySelector("#resultsPos").classList.remove("bg-gray-400");
+            document.querySelector("#resultsDriver").classList.remove("bg-gray-400");
+            document.querySelector("#resultsConst").classList.remove("bg-gray-400");
+            document.querySelector("#resultsLaps").classList.add("bg-gray-400");
+            document.querySelector("#resultsPts").classList.remove("bg-gray-400");
+    
             return b.laps - a.laps;
-        } else if (header = "Pts") {
-
+        } else if (header === "Pts") {
+            document.querySelector("#resultsPos").classList.remove("bg-gray-400");
+            document.querySelector("#resultsDriver").classList.remove("bg-gray-400");
+            document.querySelector("#resultsConst").classList.remove("bg-gray-400");
+            document.querySelector("#resultsLaps").classList.remove("bg-gray-400");
+            document.querySelector("#resultsPts").classList.add("bg-gray-400");
+    
             return b.points - a.points;
         }
+    
         return 0;
     });
+    
     for (let d of sortedData) {
 
         if (d.position === 1) {
