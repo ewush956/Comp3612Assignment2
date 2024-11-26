@@ -63,3 +63,17 @@ dialog aside {
     width: 30px;
     height: 30px;
 }
+@media (min-width: 1280px) and (max-height: 700px) {
+    html {
+        zoom: 85%; /* Decrease zoom level */
+    }
+    #driverModal {
+        height: 110vh; /* Set height to 80% of the viewport height */
+    }
+    #favoritesModal {
+        height: 110vh; /* Set height to 80% of the viewport height */
+    }
+    #home {
+         /* Decrease zoom level */
+    }
+}
