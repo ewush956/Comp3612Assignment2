@@ -765,7 +765,7 @@ function setupCircuitModal(race) {
         let circuitModal = document.querySelector('#circuitModal');
         let closeModalButton = document.querySelector('#closeCircuitModal');
 
-        document.querySelector('#circuitName').textContent = race.circuit.name;
+        document.querySelector('#circuit_name').textContent = race.circuit.name;
         document.querySelector('#circuitLocation').textContent = race.circuit.location;
         document.querySelector('#circuitCountry').textContent = race.circuit.country;
         document.querySelector('#circuitUrl').href = race.circuit.url;
