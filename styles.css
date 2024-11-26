@@ -77,10 +77,6 @@ dialog aside {
         height: 110vh;
         /* Set height to 80% of the viewport height */
     }
-
-    #home {
-        /* Decrease zoom level */
-    }
 }
 
 iframe {

@@ -151,7 +151,7 @@ function raceClick(seasonData) {
             });
             let resultsData = filterData(seasonData, raceId, "results")
             populateResultsData(resultsData, "", year);
-        resultsSort.addEventListener("click", (event) => {
+            resultsSort.addEventListener("click", (event) => {
 
                 let element = event.target;
 
@@ -553,6 +553,7 @@ function changeView(currentView) {
     const secondBox = document.querySelector("#secondBox");
     const thirdBox = document.querySelector("#thirdBox");
     const loadingView = document.querySelector("#loading");
+    const video = document.querySelector("#titleVideo");
     let toasters = document.querySelector(".toaster");
 
     document.querySelector('#raceInfo').innerHTML = '';
@@ -749,7 +750,7 @@ function setupConstructorModal(year) {
             let closeModalButton = document.querySelector('#closeModal');
             let constructor_ref = row.getAttribute("ref");
             console.log(`constructor_ref: ${constructor_ref}`);
-            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
+            fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/constructors.php?ref=${constructor_ref}`)
                 .then(response => response.json())
                 .then(constructor => {
                     document.querySelector('#constructorName').textContent = constructor.name;
@@ -781,7 +782,7 @@ function setupConstructorModal(year) {
  * @param {number} season - The season year for which to fetch the constructor results.
  */
 function populateConstructorTable(constructor_ref, season) {
-    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
+    fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/constructorResults.php?constructor=${constructor_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingConstructors => {
 
@@ -835,7 +836,7 @@ function setupDriverModal(currentSeason) {
             let closeModalButton = document.querySelector('#closeDriverModal');
             let driver_ref = row.getAttribute("ref");
 
-            fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
+            fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref=${driver_ref}`)
                 .then(response => response.json())
                 .then(driver => {
 
@@ -870,7 +871,7 @@ function setupDriverModal(currentSeason) {
  */
 function populateDriverTable(driver_ref, season) {
     console.log(`driver_ref: ${driver_ref}, season: ${season}`);
-    fetch(`http://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
+    fetch(`https://www.randyconnolly.com/funwebdev/3rd/api/f1/driverResults.php?driver=${driver_ref}&season=${season}`)
         .then(response => response.json())
         .then(matchingDrivers => {
 
