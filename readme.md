@@ -30,7 +30,6 @@ You can view the live application on GitHub Pages: [F1 Dashboard](https://ewush9
 - **CSS**: For styling the application.
 - **JavaScript**: For adding interactivity and fetching data from APIs.
 - **Tailwind CSS**: For responsive design and utility-first CSS framework.
-- **YouTube IFrame API**: For embedding and controlling YouTube videos.
 
 ## API Endpoints
 
