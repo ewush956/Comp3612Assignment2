@@ -16,22 +16,6 @@ You can view the live application on GitHub Pages: [F1 Dashboard](https://ewush9
 - **Favorites**: Add drivers, constructors, and circuits to a favorites list for quick access.
 - **Responsive Design**: The application is designed to be responsive and works well on both desktop and mobile devices.
 
-## Installation
-
-To run the F1 Dashboard locally, follow these steps:
-
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/ewush956/Comp3612Assignment2.git
-    ```
-
-2. **Navigate to the project directory**:
-    ```bash
-    cd Comp3612Assignment2
-    ```
-
-3. **Open the `index.html` file in your preferred web browser**.
-
 ## Usage
 
 - **Home Page**: The home page displays an overview of the application and provides navigation to different sections.
@@ -59,23 +43,7 @@ The application fetches data from the following API endpoints:
 - **Driver Data**: `https://www.randyconnolly.com/funwebdev/3rd/api/f1/drivers.php?ref={driver_ref}`
 - **Circuit Data**: `https://www.randyconnolly.com/funwebdev/3rd/api/f1/circuits.php?ref={circuit_ref}`
 
-## Contributing
 
-Contributions are welcome! If you have any suggestions or improvements, please create a pull request or open an issue.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Acknowledgements
-
-- Special thanks to [Randy Connolly](https://www.randyconnolly.com/) for providing the API endpoints used in this project.
-- Thanks to the [Tailwind CSS](https://tailwindcss.com/) team for their excellent CSS framework.
-
-## Contact
-
-For any inquiries or feedback, please contact [Evan Wush](mailto:ewush956@example.com).
-
----
-
-[GitHub Repo](https://github.com/ewush956/Comp3612Assignment2)
+## Citations
+- [Tailwind CSS](https://tailwindcss.com/) 
+- [Google Images](https://images.google.com/)
