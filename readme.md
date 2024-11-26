@@ -45,5 +45,5 @@ The application fetches data from the following API endpoints:
 
 ## Citations
 - [Tailwind CSS](https://tailwindcss.com/) 
-- [Loading Animation] (https://giphy.com/stickers/jaguar-jaguar85-jaguarrussia-duWMCvxS6XAhpHNpVL/)
-- [AI Generated heart icon] (https://chatgpt.com/)
+- [Loading Animation](https://giphy.com/stickers/jaguar-jaguar85-jaguarrussia-duWMCvxS6XAhpHNpVL/)
+- [AI Generated heart icon](https://chatgpt.com/)
