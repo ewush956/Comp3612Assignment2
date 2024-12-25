@@ -6,7 +6,7 @@ The F1 Dashboard is a web application designed to provide users with comprehensi
 
 ## View the Application
 
-You can view the live application on GitHub Pages: [F1 Dashboard](https://ewush956.github.io/Comp3612Assignment2/)
+You can view the live application on GitHub Pages: [F1 Dashboard](https://ewush956.github.io/F1-Dashboard/)
 
 ## Features
 
